@@ -17,17 +17,28 @@
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
+  color: rgb(var(--foreground-rgb));}
+  /* background: linear-gradient(
       to bottom,
       transparent,
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
-}
+} */
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+}
+
+.beer-cup {
+  /* background: url("https://cdn4.iconfinder.com/data/icons/brewery-outline/128/irish_pint_Beer_Glass_Booze_Guinness_Ireland-512.png"); */
+  background: url("kisspng-guinness-gluten-free-beer-irish-stout-5aec5b0086e038.5345542415254392325525.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.guinness-gold {
+  color: rgb(190, 150, 91);
 }

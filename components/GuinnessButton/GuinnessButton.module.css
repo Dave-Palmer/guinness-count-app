@@ -1,0 +1,35 @@
+.button {
+    position: relative;
+    padding: 12px 24px;
+    margin: 1rem;
+    background-color: rgb(185, 150, 91);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+  
+  .text {
+    position: relative;
+    z-index: 1;
+  }
+  
+  .bubble {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 300%;
+    height: 300%;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    transform: translate(-50%, -50%) scale(0);
+  }
+  
+  .button:hover .bubble {
+    transform: translate(-50%, -50%) scale(1);
+  }
