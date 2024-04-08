@@ -25,7 +25,7 @@ const Navbar = () => {
       </div> */}
       <div className="hidden md:flex items-center justify-center">
         {links.map((link) => (
-          <Link href={link.href}>
+          <Link key={link.name} href={link.href}>
             <p className="text-white text-center hover:text-gray-300 w-40">
               {link.name}
             </p>
@@ -59,23 +59,13 @@ const Navbar = () => {
       </div>
       {isOpen && (
         <div className="md:hidden">
-          <ul className="mt-2 space-y-2">
-            <li>
-              <Link href="/dashboard">
-                <p className="text-white hover:text-gray-300">Dashboard</p>
+          <div className=" flex flex-col">
+            {links.map((link) => (
+              <Link key={link.name} href={link.href}>
+                <p className="text-white hover:text-gray-300">{link.name}</p>
               </Link>
-            </li>
-            <li>
-              <Link href="/leaderboard">
-                <p className="text-white hover:text-gray-300">Leaderboard</p>
-              </Link>
-            </li>
-            <li>
-              <Link href="/logout">
-                <p className="text-white hover:text-gray-300">Logout</p>
-              </Link>
-            </li>
-          </ul>
+            ))}
+          </div>
         </div>
       )}
     </nav>
