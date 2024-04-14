@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { montserrat } from "../utils/fonts";
+import { Providers } from "./providers";
 
 import "./globals.css";
 
@@ -18,9 +19,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${montserrat}`}>
-        {children}
-        <script src="../path/to/flowbite/dist/flowbite.min.js"></script>
+      <body>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

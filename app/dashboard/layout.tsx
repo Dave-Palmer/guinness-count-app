@@ -1,8 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import BeerCountCard from "@/components/BeerCountCard";
-import GuinnessButton from "@/components/AddBeerButton/AddBeerButton";
-import Navbar from "@/components/Navbar";
+import NavigationBar from "../components/NavigationBar";
 
 export default function DashboardLayout({
   children,
@@ -11,18 +9,22 @@ export default function DashboardLayout({
 }) {
   return (
     <>
-      <Navbar />
-      <section className="flex flex-col items-center p-10">
-        <Image
-          src={
-            "https://upload.wikimedia.org/wikipedia/en/thumb/f/f8/Guinness_logo_dark_text.svg/220px-Guinness_logo_dark_text.svg.png"
-          }
-          width={150}
-          height={150}
-          alt="Guinness Logo"
-        />
-        {children}
-      </section>
+      <main className="flex h-screen flex-col items-center">
+        <NavigationBar />
+        <section className="flex flex-col items-center">
+          <div className="p-10">
+            <Image
+              src={
+                "https://upload.wikimedia.org/wikipedia/en/thumb/f/f8/Guinness_logo_dark_text.svg/220px-Guinness_logo_dark_text.svg.png"
+              }
+              width={150}
+              height={150}
+              alt="Guinness Logo"
+            />
+          </div>
+          {children}
+        </section>
+      </main>
     </>
   );
 }

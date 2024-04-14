@@ -1,17 +1,18 @@
 "use client";
 import { useState } from "react";
-import AddBeerButton from "@/components/AddBeerButton/AddBeerButton";
-import { useRouter } from "next/navigation";
+import { useRouter, redirect } from "next/navigation";
+import { Button, Link, Input, Tooltip } from "@nextui-org/react";
+import FriendsListModal from "@/app/components/FriendsListModal";
 
 const page = () => {
   const [location, setLocation] = useState("");
-  const [noLocationText, setNoLocationText] = useState(false);
+  const [openToolTip, setOpenToolTip] = useState(false);
 
   const router = useRouter();
 
   const handleAddBeer = async () => {
     if (!location) {
-      setNoLocationText(true);
+      setOpenToolTip(true);
       return;
     }
     alert(location);
@@ -19,22 +20,34 @@ const page = () => {
   };
   return (
     <div className="w-full flex items-center justify-center flex-col">
-      <p className="mt-2">Where did you have a Guinness?</p>
-      <input
-        className="w-4/5 border rounded-md mt-2 p-2 text-md bg-gray-100 focus:outline-none focus:bg-white focus:text-gray-900"
-        required
-        type="text"
-        name="location"
-        id="location"
-        placeholder="location..."
-        onChange={(e) => {
-          setNoLocationText(false);
-          setLocation(e.target.value);
-        }}
-      />
-      {noLocationText && <p className="text-red-500">Please add a location</p>}
-      <p className="mt-2">Add friends</p>
-      <AddBeerButton onClick={handleAddBeer} text="Add a beer" />
+      <p className="m-2 text-zinc-500">Where did you have a Guinness?</p>
+      <Tooltip
+        color="warning"
+        content="Please add a location"
+        isOpen={openToolTip}>
+        <Input
+          fullWidth={false}
+          className="w-2/3 "
+          type="text"
+          label="location"
+          onChange={(e) => {
+            setLocation(e.target.value);
+            setOpenToolTip(false);
+          }}
+        />
+      </Tooltip>
+      {/* <Button
+        size="lg"
+        className="text-center bg-guinness-gold text-white mt-5">
+        Add Friends?
+      </Button> */}
+      <FriendsListModal />
+      <Button
+        onPress={handleAddBeer}
+        size="lg"
+        className="text-center bg-guinness-gold text-white mt-5">
+        Add Beer
+      </Button>
     </div>
   );
 };
