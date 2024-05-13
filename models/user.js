@@ -27,6 +27,8 @@ const userSchema = new Schema({
     type: String,
     required: [true, "Password is required"],
   },
+  friends: [{ type: Schema.Types.ObjectId, ref: "User" }],
+  friendRequests: [{ type: Schema.Types.ObjectId, ref: "User" }],
 });
 
 const User = models.User || model("User", userSchema);

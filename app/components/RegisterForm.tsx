@@ -11,6 +11,7 @@ const initialState = {
 
 const RegisterForm = () => {
   const [formState, dispatch] = useFormState(registerAccount, initialState);
+  const { pending } = useFormStatus();
   return (
     <div>
       {" "}
@@ -65,6 +66,7 @@ const RegisterForm = () => {
                 className="m-2"
               />
               <Button
+                isDisabled={pending}
                 size="lg"
                 type="submit"
                 className="m-4 text-center bg-guinness-gold text-white">

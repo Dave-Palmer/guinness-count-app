@@ -28,12 +28,7 @@ const SigninForm = () => {
           label="Password"
           className="m-2"
         />
-        <Button
-          size="lg"
-          type="submit"
-          className="mt-2 text-center bg-guinness-gold text-white">
-          Sign In
-        </Button>
+        <SignInButton />
         {errorMessage && (
           <>
             {/* <ExclamationCircleIcon className="h-5 w-5 text-red-500" /> */}
@@ -52,5 +47,18 @@ const SigninForm = () => {
     </div>
   );
 };
+
+function SignInButton() {
+  const { pending } = useFormStatus();
+  return (
+    <Button
+      isDisabled={pending}
+      size="lg"
+      type="submit"
+      className="mt-2 text-center bg-guinness-gold text-white">
+      Sign In
+    </Button>
+  );
+}
 
 export default SigninForm;

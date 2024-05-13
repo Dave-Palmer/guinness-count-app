@@ -19,7 +19,36 @@ export default function NavigationBar() {
     false
   );
 
-  const menuItems = ["Dashboard", "Leaderboard", "Friends", "Sign Out"];
+  const menuItems = [
+    {
+      name: "Dashboard",
+      href: "/dashboard",
+      onPressMethod: () => {
+        setIsMenuOpen();
+      },
+    },
+    {
+      name: "Leaderboard",
+      href: "/dashboard/leaderboard",
+      onPressMethod: () => {
+        setIsMenuOpen();
+      },
+    },
+    {
+      name: "Friends",
+      href: "/dashboard/friends",
+      onPressMethod: () => {
+        setIsMenuOpen();
+      },
+    },
+    {
+      name: "Signout",
+      href: undefined,
+      onPressMethod: () => {
+        signout();
+      },
+    },
+  ];
 
   return (
     <Navbar onMenuOpenChange={setIsMenuOpen} isMenuOpen={isMenuOpen}>
@@ -34,39 +63,20 @@ export default function NavigationBar() {
       </NavbarContent>
 
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
-        <NavbarItem>
-          <Button
-            as={Link}
-            className="w-[100px] bg-guinness-gold text-white"
-            href="/dashboard">
-            Dashboard
-          </Button>
-          {/* <Link className="w-[100px] text-center" color="foreground" href="#">
-            Dashboard
-          </Link> */}
-        </NavbarItem>
-        <NavbarItem isActive>
-          <Button
-            as={Link}
-            className="w-[100px] bg-guinness-gold text-white"
-            href="/dashboard/leaderboard"
-            aria-current="page">
-            Leaderboard
-          </Button>
-        </NavbarItem>
-        <NavbarItem>
-          <Button
-            as={Link}
-            className="w-[100px] bg-guinness-gold text-white"
-            href="/dashboard/friends">
-            Friends
-          </Button>
-        </NavbarItem>
+        {menuItems.map((item, index) =>
+          item.name !== "Signout" ? (
+            <NavbarItem key={`${item}-${index}`}>
+              <Button
+                as={Link}
+                className="w-[100px] bg-guinness-gold text-white"
+                href={item.href}>
+                {item.name}
+              </Button>
+            </NavbarItem>
+          ) : null
+        )}
       </NavbarContent>
       <NavbarContent justify="end">
-        {/* <NavbarItem className="hidden lg:flex">
-          <Link href="#">Login</Link>
-        </NavbarItem> */}
         <NavbarItem>
           <Button
             onPress={() => signout()}
@@ -76,16 +86,16 @@ export default function NavigationBar() {
           </Button>
         </NavbarItem>
       </NavbarContent>
+      {/* Menu items for collapsed navbar */}
       <NavbarMenu>
         {menuItems.map((item, index) => (
           <NavbarMenuItem key={`${item}-${index}`}>
             <Link
-              onPress={() => setIsMenuOpen()}
-              //   color="danger"
+              onPress={item.onPressMethod}
               className=" text-2xl text-zinc-700 m-2 p-2 border-b-2 hover:border-guinness-gold hover:border-b-3"
-              href="#"
+              href={item.href}
               size="lg">
-              {item}
+              {item.name}
             </Link>
           </NavbarMenuItem>
         ))}
