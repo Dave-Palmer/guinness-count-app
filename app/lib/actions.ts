@@ -6,6 +6,7 @@ import User from "@/models/user";
 import connectToDB from "@/utils/db";
 import { RegisterFormSchema } from "./zod";
 import bcrypt from "bcrypt";
+import mongoose from "mongoose";
 
 export async function authenticate(
   prevState: string | undefined,
@@ -56,7 +57,6 @@ export async function registerAccount(
       lastname: lastname,
       password: hashedPassword,
     });
-    // await signIn("credentials", { username, password });
     return { success: true, message: user.username };
   } catch (error: any) {
     console.log(error);
@@ -93,15 +93,26 @@ export async function signout() {
 export async function addNewFriendRequest(username: string) {
   try {
     await connectToDB();
+    const session = await auth();
     //check if user exists, in not return an appropiate message
     const newFriend = await User.findOne({ username: username });
-    const session = await auth();
-    const currentUser = session?.user;
+    // const currentUser = session?.user;
+    const currentUser = await User.findById(session?.user._id);
+    //Check if user is trying to add themselves as a friend
+    if (currentUser?.username === username) {
+      return { status: 400, message: "You cannot add yourself as a friend!" };
+    }
     //if usename exists, send a friend request to user
-    if (newFriend?._id && currentUser._id) {
+    if (newFriend?._id && currentUser?._id) {
+      if (currentUser.friends.includes(newFriend._id)) {
+        return {
+          status: 409,
+          message: `You already have ${username} as a friend`,
+        };
+      }
       await User.updateOne(
         { _id: newFriend._id },
-        { $addToSet: { friendRequests: currentUser._id } }
+        { $addToSet: { friendRequests: currentUser.id } }
       );
       return { status: 200, message: `Friend request sent to ${username}` };
     }
@@ -112,10 +123,62 @@ export async function addNewFriendRequest(username: string) {
 }
 
 //Accept friend request
-export async function acceptFriendRequest(
-  user: string,
-  friendRequestUsersId: string
-) {}
+export async function acceptFriendRequest(senderId: string) {
+  try {
+    await connectToDB();
+    const session = await auth();
+    const currentUser = await User.findById(session?.user?._id);
+    const currentUserId = currentUser?._id;
+    //Check if friend request user still exists
+    const newFriend = await User.findById(senderId);
+    if (!newFriend) {
+      return { status: 404, message: "User no longer exists" };
+    }
+    //Check if current user is authenticated
+    if (!currentUserId) {
+      return { status: 404, message: "User is not authenticated" };
+    }
+    // Update receiver's friendRequests array to remove senderId
+    await User.updateOne(
+      { _id: currentUserId },
+      { $pull: { friendRequests: newFriend._id } }
+    );
+    // Update sender's friends array to add receiverId
+    await User.updateOne(
+      { _id: newFriend._id },
+      { $addToSet: { friends: currentUserId } }
+    );
+    // Update receiver's friends array to add senderId
+    await User.updateOne(
+      { _id: currentUserId },
+      { $addToSet: { friends: newFriend._id } }
+    );
+    // Return success message
+    return { status: 200, message: "Friend request accepted successfully" };
+  } catch (error) {
+    console.error(error);
+    return {
+      status: 500,
+      message: "Something went wrong, failed to add new friend",
+    };
+  }
+}
 
 //Reject friend request
-export async function rejectFriendRequest() {}
+export async function rejectFriendRequest(senderId: string) {
+  try {
+    await connectToDB();
+    const session = await auth();
+    const currentUser = await User.findById(session?.user?._id);
+    const convertedSenderId = new mongoose.Types.ObjectId(senderId);
+    if (currentUser) {
+      await User.updateOne(
+        { _id: currentUser._id },
+        { $pull: { friendRequests: convertedSenderId } }
+      );
+    }
+    return;
+  } catch (error) {
+    console.log(error);
+  }
+}

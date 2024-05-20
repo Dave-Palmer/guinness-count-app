@@ -1,65 +1,105 @@
 "use client";
-import { Button, Input } from "@nextui-org/react";
-import React, { useState } from "react";
-import { addNewFriendRequest } from "@/app/lib/actions";
-import { toast, Toaster } from "sonner";
-import { useSession } from "next-auth/react";
+import React, { useEffect, useState } from "react";
+import { Badge, Button } from "@nextui-org/react";
+import Link from "next/link";
+import FriendRequestCard from "@/app/components/FriendRequestCard";
+import { checkFriendRequests, fetchListOfFriends } from "@/app/lib/data";
+import { Friend, FriendRequest } from "@/models/user";
+import { acceptFriendRequest, rejectFriendRequest } from "@/app/lib/actions";
 
 const page = () => {
-  const [addFriendUserName, setAddFriendUserName] = useState("");
-  const [addFriendButtonLoading, setAddFriendButtonLoading] = useState(false);
+  const [friendRequests, setFriendRequests] = useState<FriendRequest[] | null>(
+    null
+  );
+  const [showRequests, setShowRequests] = useState(false);
+  const [friends, setFriends] = useState<Friend[] | null>(null);
+  const [triggerUseEffect, setTriggerUseEffect] = useState(false);
 
-  const handleAddFriend = async (addFriendUserName: string) => {
-    if (!addFriendUserName) {
-      toast.error("Add a username!");
-      return;
-    }
-    setAddFriendButtonLoading(true);
-    //server action for adding friend
-    const message = await addNewFriendRequest(addFriendUserName);
-    if (message?.status === 404) {
-      toast(<p className="text-lg">{message.message}</p>, {
-        duration: 3000,
-      });
-      setAddFriendButtonLoading(false);
-      return;
-    }
-    if (message?.status === 200) {
-      toast.success(message?.message, { duration: 3000 });
-      setAddFriendButtonLoading(false);
-      return;
+  const fetchFriendRequests = async () => {
+    let requests: FriendRequest[] | null = await checkFriendRequests();
+    if (requests) {
+      setFriendRequests(requests);
     } else {
-      toast.error("Something went wrong", { duration: 3000 });
-      setAddFriendButtonLoading(false);
-      return;
+      setFriendRequests(null);
+      setShowRequests(false);
     }
+    return;
+  };
+  const fetchFriends = async () => {
+    let friendsList: Friend[] | null = await fetchListOfFriends();
+    if (friendsList) {
+      setFriends(friendsList);
+    }
+    return;
   };
 
+  const handleAcceptFriend = async (_id: string) => {
+    await acceptFriendRequest(_id);
+    setTriggerUseEffect(!triggerUseEffect);
+  };
+  const handleRejectFriend = async (_id: string) => {
+    await rejectFriendRequest(_id);
+    setTriggerUseEffect(!triggerUseEffect);
+  };
+
+  useEffect(() => {
+    console.log("triggered use effect");
+    fetchFriendRequests();
+    fetchFriends();
+  }, [triggerUseEffect]);
+
   return (
-    <div className="flex flex-col w-96">
-      <Toaster position="bottom-center" />
-      <h2 className="text-center">Search for and add friends</h2>
-      <p className="p-2">Enter a Username:</p>
-      <Input
-        radius="none"
-        fullWidth={false}
-        isClearable
-        type="text"
-        label="Username"
-        required
-        onChange={(e) => {
-          setAddFriendUserName(e.target.value);
-        }}
-      />
+    <div className="flex flex-col justify-center items-center">
+      {!!friendRequests && (
+        <>
+          <Badge content="1" color="danger" shape="circle" placement="top-left">
+            <Button
+              onPress={() => {
+                setShowRequests(!showRequests);
+              }}
+              size="lg"
+              radius="none"
+              className="text-center bg-guinness-gold text-white m-2">
+              {showRequests ? "Hide friend requests" : "Show friend requests"}
+            </Button>
+          </Badge>
+          {showRequests && (
+            <div className="flex flex-col gap-2">
+              {friendRequests.map((friendRequest) => (
+                <>
+                  <FriendRequestCard
+                    key={friendRequest._id.toString()}
+                    _id={friendRequest._id.toString()}
+                    username={friendRequest.username}
+                    firstname={friendRequest.firstname}
+                    lastname={friendRequest.lastname}
+                    acceptFriendRequest={handleAcceptFriend}
+                    rejectFriendRequest={handleRejectFriend}
+                  />
+                </>
+              ))}
+            </div>
+          )}
+        </>
+      )}
       <Button
-        onPress={() => handleAddFriend(addFriendUserName)}
+        as={Link}
+        href="/dashboard/friends/addfriend"
         size="lg"
         radius="none"
-        isLoading={addFriendButtonLoading}
-        className="text-center bg-guinness-gold text-white mt-5">
-        Add Friend
+        className="text-center bg-guinness-gold text-white m-2">
+        Add New Friend
       </Button>
-      <div className="mt-10">List of friends container</div>
+      <div className="mt-1 text-center guinness-gold underline">
+        List of friends
+      </div>
+      <ul>
+        {friends?.map((friend) => (
+          <li key={friend._id.toString()}>
+            {friend.firstname} {friend.lastname}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };

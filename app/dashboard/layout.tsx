@@ -9,7 +9,7 @@ export default function DashboardLayout({
 }) {
   return (
     <>
-      <main className="flex h-screen flex-col items-center">
+      <main className="flex flex-col items-center min-h-screen">
         <NavigationBar />
         <section className="flex flex-col items-center">
           <div className="p-10">

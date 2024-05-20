@@ -3,18 +3,18 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <main className="flex flex-col items-center justify-start w-full min-h-screen">
+    <main className="flex flex-col items-center justify-start min-h-screen">
       <Image
         className="mt-10"
         src="/kisspng-guinness-gluten-free-beer-irish-stout-5aec5b0086e038.5345542415254392325525.png"
         alt="guinness glass"
         width={230}
       />
-      <div className="w-1/2 flex flex-col items-center">
-        <p className="text-2xl guinness-gold font-medium w-1/2 text-center">
+      <div className="m:w-1/2 flex flex-col items-center">
+        <p className="text-2xl guinness-gold font-medium md:w-1/2 text-center">
           Hello
         </p>
-        <p className="text-xl guinness-gold font-medium w-1/2 pt-2">
+        <p className="text-xl guinness-gold font-medium md:w-1/2 pt-2">
           Welcome to the Guinness count app, where you and your friends can
           share everytime you have a guinness, whether you're together or on the
           other side of the world

@@ -16,7 +16,7 @@
   }
 }
 
-body {
+main {
   background-color: rgba(222, 195, 144, 0.237);
   color: rgb(var(--foreground-rgb));
 

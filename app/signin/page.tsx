@@ -5,7 +5,7 @@ import SigninForm from "../components/SigninForm";
 
 const page = () => {
   return (
-    <section className="min-h-screen flex items-center justify-start flex-col">
+    <main className="min-h-screen flex items-center justify-start flex-col">
       <Image
         className="mt-10"
         src="/kisspng-guinness-gluten-free-beer-irish-stout-5aec5b0086e038.5345542415254392325525.png"
@@ -13,7 +13,7 @@ const page = () => {
         width={230}
       />
       <SigninForm />
-    </section>
+    </main>
   );
 };
 
