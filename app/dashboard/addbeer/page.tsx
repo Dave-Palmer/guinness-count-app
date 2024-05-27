@@ -1,19 +1,18 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, redirect } from "next/navigation";
 import { Button, Link, Input, Tooltip } from "@nextui-org/react";
 import FriendsListModal from "@/app/components/FriendsListModal";
+import { Friend } from "@/models/user";
+import { toast, Toaster } from "sonner";
+import { addBeer } from "@/app/lib/actions";
 
-interface ParentComponentProps {
-  initialData: string[];
-}
-
-const page: React.FC<ParentComponentProps> = ({ initialData }) => {
-  const [data, setData] = useState<string[]>(initialData);
+const page = () => {
+  const [data, setData] = useState<Friend["_id"][]>([]);
   const [location, setLocation] = useState("");
   const [openToolTip, setOpenToolTip] = useState(false);
 
-  const updateData = (updatedData: string[]) => {
+  const updateData = (updatedData: Friend["_id"][]) => {
     setData(updatedData);
   };
 
@@ -24,11 +23,24 @@ const page: React.FC<ParentComponentProps> = ({ initialData }) => {
       setOpenToolTip(true);
       return;
     }
-    alert(data);
-    router.push("/dashboard");
+    try {
+      const res = await addBeer(location, data);
+      if (res?.status === 400 || res?.status === 500) {
+        toast.error(res.message, { duration: 3000 });
+        return;
+      }
+      if (res?.status === 200) {
+        toast.success(res.message, { duration: 3000 });
+        setLocation("");
+        router.push("/dashboard");
+      }
+    } catch (error) {
+      toast.error("Something went wrong", { duration: 3000 });
+    }
   };
+
   return (
-    <div className="w-full flex items-center justify-center flex-col">
+    <div className="w-96 flex items-center justify-center flex-col">
       <p className="m-2 text-zinc-500">Where did you have a Guinness?</p>
       <Tooltip
         showArrow
@@ -46,8 +58,9 @@ const page: React.FC<ParentComponentProps> = ({ initialData }) => {
           ],
         }}>
         <Input
-          fullWidth={false}
-          // className="w-2/3 "
+          fullWidth={true}
+          radius="none"
+          value={location}
           type="text"
           label="location"
           onChange={(e) => {
@@ -60,6 +73,7 @@ const page: React.FC<ParentComponentProps> = ({ initialData }) => {
       <Button
         onPress={handleAddBeer}
         size="lg"
+        radius="none"
         className="text-center bg-guinness-gold text-white mt-5">
         Add Beer
       </Button>

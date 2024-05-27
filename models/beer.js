@@ -9,7 +9,8 @@ const beerSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "User",
   },
-  friendParty: [{ type: Schema.Types.ObjectId, ref: "User" }],
+  withfriends: [{ type: Schema.Types.ObjectId, ref: "User" }],
+  createdAt: { type: Date, default: Date.now },
 });
 
 const Beer = models.Beer || model("Beer", beerSchema);

@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+import React, { useState, useEffect } from "react";
 import {
   Modal,
   ModalContent,
@@ -10,12 +11,13 @@ import {
   RadioGroup,
   Radio,
 } from "@nextui-org/react";
-import FriendCardList from "./FriendCardList";
 import { FriendCard } from "./FriendCard";
+import { fetchListOfFriends } from "../lib/data";
+import { Friend } from "@/models/user";
 
 interface ChildComponentProps {
-  data: string[];
-  updateData: (updatedData: string[]) => void;
+  data: Friend["_id"][];
+  updateData: (updatedData: Friend["_id"][]) => void;
 }
 
 const FriendsListModal: React.FC<ChildComponentProps> = ({
@@ -23,23 +25,35 @@ const FriendsListModal: React.FC<ChildComponentProps> = ({
   updateData,
 }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [listOfFriends, setListOfFriends] = useState<Friend[]>([]);
 
+  const fetchFriendsFromDatabase = async () => {
+    let response = await fetchListOfFriends();
+    if (response) {
+      setListOfFriends(response);
+    }
+    return;
+  };
   // Make a list of friends before adding to parent component
-  const friendList: string[] = [];
-  const handleAddToFriendList = (friend: string) => {
-    let indexOfFriend: number = friendList.indexOf(friend);
+  let friendList: Friend["_id"][] = [];
+  const handleAddToFriendList = (friendId: Friend["_id"]) => {
+    let indexOfFriend: number = friendList.indexOf(friendId);
     if (indexOfFriend === -1) {
-      friendList.push(friend);
+      friendList.push(friendId);
     }
     if (indexOfFriend !== -1) {
       friendList.splice(indexOfFriend, 1);
     }
-    console.log(friendList);
   };
+  const imgURL = "https://cdn-icons-png.flaticon.com/512/1748/1748131.png";
+  useEffect(() => {
+    fetchFriendsFromDatabase();
+  }, []);
   return (
     <div className="flex flex-col gap-2">
       <Button
         size="lg"
+        radius="none"
         onPress={onOpen}
         className=" text-center bg-guinness-gold text-white mt-5">
         Add Friends?
@@ -58,13 +72,14 @@ const FriendsListModal: React.FC<ChildComponentProps> = ({
               <ModalBody>
                 <div className="gap-2 grid grid-cols-2 sm:grid-cols-4">
                   {/* <FriendCardList handleAddToFriendList={handleAddToFriendList} /> */}
-                  {fakeFriendList.map((item, index) => (
+                  {listOfFriends.map((friend: Friend) => (
                     <FriendCard
-                      key={index}
-                      userName={item.userName}
-                      firstName={item.firstName}
-                      lastName={item.lastName}
-                      img={item.img}
+                      key={friend._id.toString()}
+                      _id={friend._id}
+                      username={friend.username}
+                      firstname={friend.firstname}
+                      lastname={friend.lastname}
+                      img={imgURL}
                       handleAddToList={handleAddToFriendList}
                     />
                   ))}
@@ -76,7 +91,9 @@ const FriendsListModal: React.FC<ChildComponentProps> = ({
                 </Button>
                 {/* When modal is closed, the friends list is added to the data array in parent component */}
                 <Button
-                  color="primary"
+                  // color="primary"
+                  // variant="light"
+                  className="text-center bg-guinness-gold text-white"
                   onPress={() => {
                     updateData(friendList);
                     onClose();
@@ -91,38 +108,5 @@ const FriendsListModal: React.FC<ChildComponentProps> = ({
     </div>
   );
 };
-
-const fakeFriendList = [
-  {
-    userName: "djpalmer",
-    firstName: "Dave",
-    lastName: "Palmer",
-    img: "https://cdn-icons-png.flaticon.com/512/1748/1748131.png",
-  },
-  {
-    userName: "bigdog",
-    firstName: "Big",
-    lastName: "Dog",
-    img: "https://cdn-icons-png.flaticon.com/512/1748/1748131.png",
-  },
-  {
-    userName: "call_me_big_dog",
-    firstName: "Small",
-    lastName: "Frie",
-    img: "https://cdn-icons-png.flaticon.com/512/1748/1748131.png",
-  },
-  {
-    userName: "call_me_big_dog",
-    firstName: "Small",
-    lastName: "Frie",
-    img: "https://cdn-icons-png.flaticon.com/512/1748/1748131.png",
-  },
-  {
-    userName: "call_me_big_dog",
-    firstName: "Small",
-    lastName: "Frie",
-    img: "https://cdn-icons-png.flaticon.com/512/1748/1748131.png",
-  },
-];
 
 export default FriendsListModal;

@@ -6,29 +6,9 @@ import User, {
   PopulatedUserDocument,
   PopulatedUserDocumentFriends,
 } from "@/models/user";
+import Beer from "@/models/beer";
 import { auth } from "@/auth";
-// import type { FriendRequest } from "./definitions";
-
-// export async function checkFriendRequests() {
-//   let friendRequestDetails: FriendRequest[] = [];
-//   const session = await auth();
-//   const userId = session?.user._id;
-//   await connectToDB();
-//   const user = await User.findById(userId).populate("friendRequests");
-//   if (user.friendRequests.length >= 1) {
-//     user.friendRequests.forEach((user: FriendRequest) => {
-//       const requestUserDetails = {
-//         _id: user._id,
-//         username: user.username,
-//         firstname: user.firstname,
-//         lastname: user.lastname,
-//       };
-//       friendRequestDetails.push(JSON.parse(JSON.stringify(requestUserDetails)));
-//     });
-//     return friendRequestDetails;
-//   }
-//   return null;
-// }
+import { BeerNumbers } from "./definitions";
 
 export async function checkFriendRequests(): Promise<FriendRequest[] | null> {
   try {
@@ -71,17 +51,73 @@ export async function fetchListOfFriends() {
   //Check if user is authenticated
   const session = await auth();
   const userId = session?.user._id;
-  const user: PopulatedUserDocumentFriends | null = await User.findById(userId)
-    .populate("friends")
-    .orFail(new Error("No docs found!"));
-  if (user?.friends) {
-    const friendsList = user.friends.map((friend) => ({
-      _id: friend._id,
-      username: friend.username,
-      firstname: friend.firstname,
-      lastname: friend.lastname,
-    }));
-    return JSON.parse(JSON.stringify(friendsList));
+  if (!userId) {
+    throw new Error("User is not authenticated");
   }
-  return null;
+  try {
+    await connectToDB();
+    const user: PopulatedUserDocumentFriends | null = await User.findById(
+      userId
+    )
+      .populate("friends")
+      .orFail(new Error("No docs found!"));
+    if (user?.friends) {
+      const friendsList = user.friends.map((friend) => ({
+        _id: friend._id,
+        username: friend.username,
+        firstname: friend.firstname,
+        lastname: friend.lastname,
+      }));
+      return JSON.parse(JSON.stringify(friendsList));
+    }
+    return null;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+//Create query to compare entrie dates with todays date
+function compareEntrieDates(userId: string) {
+  const today = new Date();
+  const currentDayOfWeek = today.getUTCDay(); // Sunday - Saturday : 0 - 6
+  const startOfWeek = new Date(today);
+  const endOfWeek = new Date(today);
+
+  // Set the startOfWeek to the previous Sunday (00:00:00)
+  startOfWeek.setUTCDate(today.getUTCDate() - currentDayOfWeek);
+  startOfWeek.setUTCHours(0, 0, 0, 0);
+
+  // Set the endOfWeek to the upcoming Saturday (23:59:59)
+  endOfWeek.setUTCDate(today.getUTCDate() + (6 - currentDayOfWeek));
+  endOfWeek.setUTCHours(23, 59, 59, 999);
+
+  return {
+    consumer: userId,
+    createdAt: {
+      $gte: startOfWeek,
+      $lte: endOfWeek,
+    },
+  };
+}
+
+//Fetch total beers & Total beers this week
+export async function fetchTotalBeers(): Promise<BeerNumbers | undefined> {
+  const session = await auth();
+  const userId = session?.user._id;
+  if (!userId) {
+    throw new Error("User is not authenticated");
+  }
+  try {
+    await connectToDB();
+    //check beer posts where consumer._id matchs userId
+    const totalBeers: number = await Beer.countDocuments({ consumer: userId });
+    const totalBeersThisWeek: number = await Beer.countDocuments(
+      compareEntrieDates(userId)
+    );
+    //Return total beers & total beers this week
+    return { totalBeers: totalBeers, weekBeers: totalBeersThisWeek };
+  } catch (error) {
+    console.log(error);
+    return { totalBeers: 0, weekBeers: 0 };
+  }
 }

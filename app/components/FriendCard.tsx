@@ -1,18 +1,16 @@
 import React, { useState } from "react";
 import { Card, CardBody, CardFooter, Image } from "@nextui-org/react";
+import { Friend } from "@/models/user";
 
-interface FriendCardProps {
-  userName: string;
-  firstName: string;
-  lastName: string;
+interface FriendCardProps extends Friend {
   img: string;
-  handleAddToList: (friend: string) => void;
+  handleAddToList: (friendId: Friend["_id"]) => void;
 }
 
 export const FriendCard: React.FC<FriendCardProps> = ({
-  userName,
-  firstName,
-  lastName,
+  _id,
+  firstname,
+  lastname,
   img,
   handleAddToList,
 }) => {
@@ -24,21 +22,21 @@ export const FriendCard: React.FC<FriendCardProps> = ({
       isPressable
       onPress={() => {
         setIsSelected(!isSelected);
-        handleAddToList(userName);
+        handleAddToList(_id);
       }}>
       <CardBody className="overflow-visible p-0 ">
         <Image
           shadow="sm"
           radius="sm"
           width="100%"
-          alt={firstName}
+          alt={firstname}
           className="w-full object-cover h-[140px]"
           src={img}
         />
       </CardBody>
       <CardFooter className="text-small justify-center">
         <p className="text-slate-500 text-lg">
-          {firstName} {lastName}
+          {firstname} {lastname}
         </p>
       </CardFooter>
     </Card>

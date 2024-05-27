@@ -2,11 +2,13 @@
 
 import { signIn, signOut, auth } from "@/auth";
 import { AuthError } from "next-auth";
-import User from "@/models/user";
+import User, { Friend } from "@/models/user";
+import Beer from "@/models/beer";
 import connectToDB from "@/utils/db";
 import { RegisterFormSchema } from "./zod";
 import bcrypt from "bcrypt";
 import mongoose from "mongoose";
+import { revalidatePath } from "next/cache";
 
 export async function authenticate(
   prevState: string | undefined,
@@ -180,5 +182,37 @@ export async function rejectFriendRequest(senderId: string) {
     return;
   } catch (error) {
     console.log(error);
+  }
+}
+
+//Add beer
+
+export async function addBeer(location: string, friendsList?: Friend["_id"][]) {
+  if (!location) {
+    return { status: 400, message: "Location is required" };
+  }
+  try {
+    connectToDB();
+    const session = await auth();
+    const currentUser = await User.findById(session?.user?._id);
+    if (currentUser) {
+      let withFriends = undefined;
+      if (friendsList) {
+        withFriends = friendsList.map(
+          (friend) => new mongoose.Types.ObjectId(friend)
+        );
+      }
+      const beerData = {
+        location: location,
+        consumer: currentUser._id,
+        withfriends: withFriends,
+      };
+      const beer = await new Beer(beerData).save();
+      revalidatePath("/dashboard");
+      return { status: 200, message: "Added beer!" };
+    }
+  } catch (error) {
+    console.log(error);
+    return { status: 500, message: "Something went wrong, beer not added!" };
   }
 }

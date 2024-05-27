@@ -43,7 +43,6 @@ const page = () => {
   };
 
   useEffect(() => {
-    console.log("triggered use effect");
     fetchFriendRequests();
     fetchFriends();
   }, [triggerUseEffect]);

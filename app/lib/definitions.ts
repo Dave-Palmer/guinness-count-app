@@ -15,3 +15,8 @@ export type FriendRequest = {
   firstname: string;
   lastname: string;
 };
+
+export interface BeerNumbers {
+  totalBeers: number;
+  weekBeers: number;
+}

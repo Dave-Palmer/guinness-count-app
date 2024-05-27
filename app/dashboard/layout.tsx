@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import NavigationBar from "../components/NavigationBar";
+import { Toaster } from "sonner";
 
 export default function DashboardLayout({
   children,
@@ -22,6 +23,7 @@ export default function DashboardLayout({
               alt="Guinness Logo"
             />
           </div>
+          <Toaster position="bottom-center" />
           {children}
         </section>
       </main>
