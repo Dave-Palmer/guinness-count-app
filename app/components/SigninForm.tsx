@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Input, Button, Link } from "@nextui-org/react";
+import { Input, Button, Link, Spinner } from "@nextui-org/react";
 import { useFormState, useFormStatus } from "react-dom";
 import { authenticate } from "../lib/actions";
 
@@ -56,7 +56,7 @@ function SignInButton() {
       size="lg"
       type="submit"
       className="mt-2 text-center bg-guinness-gold text-white">
-      Sign In
+      {pending ? <Spinner size="sm" color="default" /> : "Sign In"}
     </Button>
   );
 }

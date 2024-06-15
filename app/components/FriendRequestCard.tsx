@@ -28,7 +28,7 @@ const FriendRequestCard: React.FC<friendRequestCardProps> = ({
   rejectFriendRequest,
 }) => {
   return (
-    <Card className="max-w-[200px] bg-[#DFE0DF]" shadow="none" radius="sm">
+    <Card className="max-w-[200px] " shadow="none" radius="sm">
       <CardHeader className="flex gap-3 justify-center">
         <div className="flex flex-col">
           <p className="text-md text-center text-slate-600">Username:</p>
@@ -45,21 +45,21 @@ const FriendRequestCard: React.FC<friendRequestCardProps> = ({
       <CardFooter>
         <Button
           onPress={() => {
+            rejectFriendRequest(_id);
+          }}
+          className="m-1 text-red-500"
+          radius="sm"
+          color="default">
+          Decline
+        </Button>{" "}
+        <Button
+          onPress={() => {
             acceptFriendRequest(_id);
           }}
           className="m-1"
           radius="sm"
           color="success">
           Accept
-        </Button>
-        <Button
-          onPress={() => {
-            rejectFriendRequest(_id);
-          }}
-          className="m-1"
-          radius="sm"
-          color="danger">
-          Decline
         </Button>
       </CardFooter>
     </Card>

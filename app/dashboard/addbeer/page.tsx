@@ -59,7 +59,7 @@ const page = () => {
         }}>
         <Input
           fullWidth={true}
-          radius="none"
+          radius="sm"
           value={location}
           type="text"
           label="location"
@@ -73,7 +73,7 @@ const page = () => {
       <Button
         onPress={handleAddBeer}
         size="lg"
-        radius="none"
+        radius="sm"
         className="text-center bg-guinness-gold text-white mt-5">
         Add Beer
       </Button>

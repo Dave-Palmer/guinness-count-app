@@ -67,6 +67,7 @@ export default function NavigationBar() {
           item.name !== "Signout" ? (
             <NavbarItem key={`${item}-${index}`}>
               <Button
+                radius="sm"
                 as={Link}
                 className="w-[100px] bg-guinness-gold text-white"
                 href={item.href}>
@@ -81,6 +82,7 @@ export default function NavigationBar() {
           <Button
             onPress={() => signout()}
             variant="flat"
+            radius="full"
             className="hidden sm:flex">
             Sign out
           </Button>

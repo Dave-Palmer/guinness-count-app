@@ -21,7 +21,7 @@ const RegisterForm = () => {
           <div className="w-96">
             <form className="flex flex-col items-center" action={dispatch}>
               {!formState?.success && formState?.message && (
-                <p>{formState?.message}</p>
+                <p className="text-lg text-red-500">{formState?.message}</p>
               )}
               <Input
                 isRequired
@@ -63,6 +63,15 @@ const RegisterForm = () => {
                 size="lg"
                 type="password"
                 label="Password"
+                className="m-2"
+              />
+              <Input
+                isRequired
+                id="confirmpassword"
+                name="confirmpassword"
+                size="lg"
+                type="password"
+                label="Confirm password"
                 className="m-2"
               />
               <Button

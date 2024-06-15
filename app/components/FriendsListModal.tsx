@@ -53,7 +53,7 @@ const FriendsListModal: React.FC<ChildComponentProps> = ({
     <div className="flex flex-col gap-2">
       <Button
         size="lg"
-        radius="none"
+        radius="sm"
         onPress={onOpen}
         className=" text-center bg-guinness-gold text-white mt-5">
         Add Friends?

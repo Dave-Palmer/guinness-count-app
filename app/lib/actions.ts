@@ -18,11 +18,12 @@ export async function authenticate(
     await signIn("credentials", formData);
   } catch (error) {
     if (error instanceof AuthError) {
+      console.log(error);
       switch (error.type) {
         case "CredentialsSignin":
           return "Invalid credentials";
         default:
-          return "Something went wrong.";
+          return "Username or password incorrect";
       }
     }
     throw error;
@@ -33,6 +34,9 @@ export async function registerAccount(
   prevState: object | undefined | string,
   formData: FormData
 ) {
+  if (formData.get("password") !== formData.get("confirmpassword")) {
+    return { success: false, message: "Passwords do not match" };
+  }
   const validatedFields = RegisterFormSchema.safeParse({
     email: formData.get("email"),
     username: formData.get("username"),
@@ -80,6 +84,8 @@ export async function getUser(username: string) {
     const user = await User.findOne({ username: username });
     if (user.username) {
       return user;
+    } else {
+      return null;
     }
   } catch (error) {
     console.error("Failed to fetch user.");
@@ -182,6 +188,49 @@ export async function rejectFriendRequest(senderId: string) {
     return;
   } catch (error) {
     console.log(error);
+  }
+}
+
+// Delete a friend from the user's friend list.
+
+export async function deleteFriend(
+  friendId: string
+): Promise<{ status: number; message: string }> {
+  try {
+    // Authenticate the user
+    const session = await auth();
+    const userId = session?.user._id;
+
+    if (!userId) {
+      throw new Error("User is not authenticated");
+    }
+
+    await connectToDB();
+
+    const friendObjectId = new mongoose.Types.ObjectId(friendId);
+    // Remove the friend from the user's friends list
+    const userUpdateResult = await User.updateOne(
+      { _id: new mongoose.Types.ObjectId(userId) },
+      { $pull: { friends: friendObjectId } }
+    );
+
+    if (userUpdateResult.modifiedCount === 0) {
+      throw new Error("Failed to remove friend from user's friend list");
+    }
+    // remove the user from the friend's friends list
+    const friendUpdateResult = await User.updateOne(
+      { _id: friendObjectId },
+      { $pull: { friends: new mongoose.Types.ObjectId(userId) } }
+    );
+
+    if (friendUpdateResult.modifiedCount === 0) {
+      throw new Error("Failed to remove user from friend's friend list");
+    }
+
+    return { status: 200, message: "Friend successfully removed" };
+  } catch (error) {
+    console.error("Error deleting friend:", error);
+    throw error; // Rethrow the error for handling in the caller function
   }
 }
 

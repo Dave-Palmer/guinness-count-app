@@ -1,3 +1,6 @@
+import { Friend } from "@/models/user";
+import mongoose from "mongoose";
+
 export type User = {
   id: string;
   _id: string;
@@ -7,6 +10,7 @@ export type User = {
   email: string;
   password: string;
   emailVerified: Date;
+  friends: [mongoose.Types.ObjectId];
 };
 
 export type FriendRequest = {
@@ -19,4 +23,11 @@ export type FriendRequest = {
 export interface BeerNumbers {
   totalBeers: number;
   weekBeers: number;
+}
+
+export interface LeaderBoardUser {
+  firstname: string;
+  lastname: string;
+  totalBeers: number;
+  currentUser: boolean;
 }

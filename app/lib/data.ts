@@ -8,7 +8,8 @@ import User, {
 } from "@/models/user";
 import Beer from "@/models/beer";
 import { auth } from "@/auth";
-import { BeerNumbers } from "./definitions";
+import { BeerNumbers, LeaderBoardUser } from "./definitions";
+import mongoose from "mongoose";
 
 export async function checkFriendRequests(): Promise<FriendRequest[] | null> {
   try {
@@ -119,5 +120,104 @@ export async function fetchTotalBeers(): Promise<BeerNumbers | undefined> {
   } catch (error) {
     console.log(error);
     return { totalBeers: 0, weekBeers: 0 };
+  }
+}
+
+// Fetch user's friends and total beers for each friend and user for leadboard page
+
+// export async function fetchFriendsTotalBeers(): Promise<
+//   LeaderBoardUser[] | undefined
+// > {
+//   const session = await auth();
+//   const userId = session?.user._id;
+//   if (!userId) {
+//     throw new Error("User is not authenticated");
+//   }
+//   try {
+//     let userFriendsStats: LeaderBoardUser[] = [];
+//     await connectToDB();
+//     // Add users stats
+//     const userTotalBeers: number = await Beer.countDocuments({
+//       consumer: userId,
+//     });
+
+//     userFriendsStats.push({
+//       firstname: session.user.firstname,
+//       lastname: session.user.lastname,
+//       totalBeers: userTotalBeers,
+//       currentUser: true,
+//     });
+
+//     // Add user's friends stats
+//     if (session.user.friends) {
+//       for (let friendId of session.user.friends) {
+//         let friend = await User.findById(friendId);
+//         let userBeerCount = await Beer.countDocuments({ consumer: friend._id });
+//         userFriendsStats.push({
+//           firstname: friend.firstname,
+//           lastname: friend.lastname,
+//           totalBeers: userBeerCount,
+//           currentUser: false,
+//         });
+//       }
+//     }
+//     console.log(userFriendsStats);
+//     return userFriendsStats;
+//   } catch (error) {
+//     console.log(error);
+//     throw new Error("Failed to fetch all stats");
+//   }
+// }
+
+// Fetch user's friends and total beers for each friend and user for leadboard page
+
+export async function fetchFriendsTotalBeers(): Promise<LeaderBoardUser[]> {
+  const session = await auth();
+  const userId = session?.user._id;
+
+  if (!userId) {
+    throw new Error("User is not authenticated");
+  }
+
+  try {
+    await connectToDB();
+
+    // Fetch current user's total beers
+    const userTotalBeers = await Beer.countDocuments({ consumer: userId });
+    const userStats: LeaderBoardUser = {
+      firstname: session.user.firstname,
+      lastname: session.user.lastname,
+      totalBeers: userTotalBeers,
+      currentUser: true,
+    };
+
+    // Fetch friends' stats
+    const friendsStatsPromises =
+      session.user.friends?.map(async (friendId) => {
+        const friend = await User.findById(friendId);
+        if (!friend) return null;
+
+        const friendTotalBeers = await Beer.countDocuments({
+          consumer: friend._id,
+        });
+        return {
+          firstname: friend.firstname,
+          lastname: friend.lastname,
+          totalBeers: friendTotalBeers,
+          currentUser: false,
+        } as LeaderBoardUser;
+      }) || [];
+
+    const friendsStats = await Promise.all(friendsStatsPromises);
+    const validFriendsStats = friendsStats.filter(
+      (stat) => stat !== null
+    ) as LeaderBoardUser[];
+
+    // Combine user's stats and friends' stats
+
+    return [userStats, ...validFriendsStats];
+  } catch (error) {
+    console.error("Error fetching friend stats:", error);
+    throw new Error("Failed to fetch all stats");
   }
 }

@@ -12,7 +12,7 @@ export default function DashboardLayout({
     <>
       <main className="flex flex-col items-center min-h-screen">
         <NavigationBar />
-        <section className="flex flex-col items-center">
+        <section className="flex flex-col items-center w-full">
           <div className="p-10">
             <Image
               src={
@@ -21,6 +21,8 @@ export default function DashboardLayout({
               width={150}
               height={150}
               alt="Guinness Logo"
+              priority={true}
+              placeholder="empty"
             />
           </div>
           <Toaster position="bottom-center" />

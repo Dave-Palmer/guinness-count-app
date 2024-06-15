@@ -30,6 +30,7 @@ const page = async () => {
       <Button
         as={Link}
         size="lg"
+        radius="sm"
         href="/dashboard/addbeer"
         className="text-center bg-guinness-gold text-white mb-5">
         Having a Beer?
