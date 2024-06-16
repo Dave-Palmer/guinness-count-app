@@ -23,28 +23,28 @@ export default function NavigationBar() {
     {
       name: "Dashboard",
       href: "/dashboard",
-      onPressMethod: () => {
+      onClickMethod: () => {
         setIsMenuOpen();
       },
     },
     {
       name: "Leaderboard",
       href: "/dashboard/leaderboard",
-      onPressMethod: () => {
+      onClickMethod: () => {
         setIsMenuOpen();
       },
     },
     {
       name: "Friends",
       href: "/dashboard/friends",
-      onPressMethod: () => {
+      onClickMethod: () => {
         setIsMenuOpen();
       },
     },
     {
       name: "Signout",
       href: undefined,
-      onPressMethod: () => {
+      onClickMethod: () => {
         signout();
       },
     },
@@ -93,9 +93,9 @@ export default function NavigationBar() {
         {menuItems.map((item, index) => (
           <NavbarMenuItem key={`${item}-${index}`}>
             <Link
-              onPress={item.onPressMethod}
               className=" text-2xl text-zinc-700 m-2 p-2 border-b-2 hover:border-guinness-gold hover:border-b-3"
               href={item.href}
+              onClick={item.onClickMethod}
               size="lg">
               {item.name}
             </Link>

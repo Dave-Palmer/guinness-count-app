@@ -57,6 +57,7 @@ const page = () => {
       <h2 className="text-center text-zinc-500">Search for and add friends</h2>
       <p className="p-2 text-zinc-500">Enter a Username:</p>
       <Input
+        style={{ fontSize: "16px" }}
         radius="sm"
         fullWidth={false}
         isClearable

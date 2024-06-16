@@ -136,6 +136,7 @@ export async function fetchTotalBeers(): Promise<BeerNumbers | undefined> {
 //   try {
 //     let userFriendsStats: LeaderBoardUser[] = [];
 //     await connectToDB();
+//     const currentUser: UserDocument | null = await User.findById(userId);
 //     // Add users stats
 //     const userTotalBeers: number = await Beer.countDocuments({
 //       consumer: userId,
@@ -149,8 +150,8 @@ export async function fetchTotalBeers(): Promise<BeerNumbers | undefined> {
 //     });
 
 //     // Add user's friends stats
-//     if (session.user.friends) {
-//       for (let friendId of session.user.friends) {
+//     if (currentUser?.friends) {
+//       for (let friendId of currentUser.friends) {
 //         let friend = await User.findById(friendId);
 //         let userBeerCount = await Beer.countDocuments({ consumer: friend._id });
 //         userFriendsStats.push({
@@ -181,7 +182,8 @@ export async function fetchFriendsTotalBeers(): Promise<LeaderBoardUser[]> {
 
   try {
     await connectToDB();
-
+    //
+    const currentUser: UserDocument | null = await User.findById(userId);
     // Fetch current user's total beers
     const userTotalBeers = await Beer.countDocuments({ consumer: userId });
     const userStats: LeaderBoardUser = {
@@ -193,7 +195,7 @@ export async function fetchFriendsTotalBeers(): Promise<LeaderBoardUser[]> {
 
     // Fetch friends' stats
     const friendsStatsPromises =
-      session.user.friends?.map(async (friendId) => {
+      currentUser?.friends?.map(async (friendId) => {
         const friend = await User.findById(friendId);
         if (!friend) return null;
 

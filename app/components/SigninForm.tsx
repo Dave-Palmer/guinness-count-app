@@ -13,6 +13,7 @@ const SigninForm = () => {
       <form className="flex flex-col items-center" action={dispatch}>
         <Input
           required
+          radius="sm"
           id="username"
           name="username"
           size="lg"
@@ -21,6 +22,7 @@ const SigninForm = () => {
         />
         <Input
           required
+          radius="sm"
           id="password"
           name="password"
           size="lg"
@@ -40,6 +42,7 @@ const SigninForm = () => {
           as={Link}
           href="/register"
           size="md"
+          radius="sm"
           className="mt-4 text-center bg-guinness-gold text-white">
           Register
         </Button>
@@ -55,6 +58,7 @@ function SignInButton() {
       isDisabled={pending}
       size="lg"
       type="submit"
+      radius="sm"
       className="mt-2 text-center bg-guinness-gold text-white">
       {pending ? <Spinner size="sm" color="default" /> : "Sign In"}
     </Button>

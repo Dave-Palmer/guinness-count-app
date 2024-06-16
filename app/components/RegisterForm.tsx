@@ -28,6 +28,7 @@ const RegisterForm = () => {
                 id="email"
                 name="email"
                 size="lg"
+                radius="sm"
                 label="Email"
                 className="m-2"
                 type="email"
@@ -37,6 +38,7 @@ const RegisterForm = () => {
                 id="username"
                 name="username"
                 size="lg"
+                radius="sm"
                 label="Username"
                 className="m-2"
               />
@@ -45,6 +47,7 @@ const RegisterForm = () => {
                 id="firstname"
                 name="firstname"
                 size="lg"
+                radius="sm"
                 label="First Name"
                 className="m-2"
               />
@@ -53,6 +56,7 @@ const RegisterForm = () => {
                 id="lastname"
                 name="lastname"
                 size="lg"
+                radius="sm"
                 label="Last Name"
                 className="m-2"
               />
@@ -61,6 +65,7 @@ const RegisterForm = () => {
                 id="password"
                 name="password"
                 size="lg"
+                radius="sm"
                 type="password"
                 label="Password"
                 className="m-2"
@@ -70,6 +75,7 @@ const RegisterForm = () => {
                 id="confirmpassword"
                 name="confirmpassword"
                 size="lg"
+                radius="sm"
                 type="password"
                 label="Confirm password"
                 className="m-2"
@@ -77,6 +83,7 @@ const RegisterForm = () => {
               <Button
                 isDisabled={pending}
                 size="lg"
+                radius="sm"
                 type="submit"
                 className="m-4 text-center bg-guinness-gold text-white">
                 Create
@@ -84,6 +91,7 @@ const RegisterForm = () => {
               <Button
                 as={Link}
                 size="sm"
+                radius="sm"
                 href="/signin"
                 className="mb-2 bg-guinness-gold text-white">
                 Back to sign in
@@ -101,8 +109,9 @@ const RegisterForm = () => {
           <Button
             as={Link}
             size="lg"
+            radius="sm"
             href="/signin"
-            className="m-2 bg-guinness-gold text-white">
+            className="m-2 bg-guinness-gold text-white mb-5">
             Back to sign in
           </Button>
         </div>

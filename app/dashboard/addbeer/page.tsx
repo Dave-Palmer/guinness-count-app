@@ -58,6 +58,7 @@ const page = () => {
           ],
         }}>
         <Input
+          style={{ fontSize: "16px" }}
           fullWidth={true}
           radius="sm"
           value={location}

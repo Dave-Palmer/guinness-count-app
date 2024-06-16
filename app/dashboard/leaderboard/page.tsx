@@ -6,7 +6,7 @@ import { Spinner, Card, CardBody, Divider } from "@nextui-org/react";
 
 const page = () => {
   const [leaderboardUser, setLeaderboardUser] = useState<LeaderBoardUser[]>([]);
-  const [islLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchLeaderboard = async () => {
@@ -29,7 +29,7 @@ const page = () => {
       <h1 className="text-2xl text-guinness-gold underline underline-offset-8 mb-3">
         Leaderboard
       </h1>
-      {islLoading ? (
+      {isLoading ? (
         <Spinner label="Loading..." color="warning" />
       ) : (
         <div className="w-96">
