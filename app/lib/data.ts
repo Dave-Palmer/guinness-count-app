@@ -8,7 +8,7 @@ import User, {
 } from "@/models/user";
 import Beer from "@/models/beer";
 import { auth } from "@/auth";
-import { BeerNumbers, LeaderBoardUser } from "./definitions";
+import { BeerNumbers, LeaderBoardUser, BeerPost } from "./definitions";
 import mongoose from "mongoose";
 
 export async function checkFriendRequests(): Promise<FriendRequest[] | null> {
@@ -125,53 +125,6 @@ export async function fetchTotalBeers(): Promise<BeerNumbers | undefined> {
 
 // Fetch user's friends and total beers for each friend and user for leadboard page
 
-// export async function fetchFriendsTotalBeers(): Promise<
-//   LeaderBoardUser[] | undefined
-// > {
-//   const session = await auth();
-//   const userId = session?.user._id;
-//   if (!userId) {
-//     throw new Error("User is not authenticated");
-//   }
-//   try {
-//     let userFriendsStats: LeaderBoardUser[] = [];
-//     await connectToDB();
-//     const currentUser: UserDocument | null = await User.findById(userId);
-//     // Add users stats
-//     const userTotalBeers: number = await Beer.countDocuments({
-//       consumer: userId,
-//     });
-
-//     userFriendsStats.push({
-//       firstname: session.user.firstname,
-//       lastname: session.user.lastname,
-//       totalBeers: userTotalBeers,
-//       currentUser: true,
-//     });
-
-//     // Add user's friends stats
-//     if (currentUser?.friends) {
-//       for (let friendId of currentUser.friends) {
-//         let friend = await User.findById(friendId);
-//         let userBeerCount = await Beer.countDocuments({ consumer: friend._id });
-//         userFriendsStats.push({
-//           firstname: friend.firstname,
-//           lastname: friend.lastname,
-//           totalBeers: userBeerCount,
-//           currentUser: false,
-//         });
-//       }
-//     }
-//     console.log(userFriendsStats);
-//     return userFriendsStats;
-//   } catch (error) {
-//     console.log(error);
-//     throw new Error("Failed to fetch all stats");
-//   }
-// }
-
-// Fetch user's friends and total beers for each friend and user for leadboard page
-
 export async function fetchFriendsTotalBeers(): Promise<LeaderBoardUser[]> {
   const session = await auth();
   const userId = session?.user._id;
@@ -187,6 +140,7 @@ export async function fetchFriendsTotalBeers(): Promise<LeaderBoardUser[]> {
     // Fetch current user's total beers
     const userTotalBeers = await Beer.countDocuments({ consumer: userId });
     const userStats: LeaderBoardUser = {
+      _id: userId,
       firstname: session.user.firstname,
       lastname: session.user.lastname,
       totalBeers: userTotalBeers,
@@ -203,6 +157,7 @@ export async function fetchFriendsTotalBeers(): Promise<LeaderBoardUser[]> {
           consumer: friend._id,
         });
         return {
+          _id: friendId.toString(),
           firstname: friend.firstname,
           lastname: friend.lastname,
           totalBeers: friendTotalBeers,
@@ -221,5 +176,57 @@ export async function fetchFriendsTotalBeers(): Promise<LeaderBoardUser[]> {
   } catch (error) {
     console.error("Error fetching friend stats:", error);
     throw new Error("Failed to fetch all stats");
+  }
+}
+
+//Fetch all posts from one friend
+
+export async function fetchFriendsPosts(
+  id: string,
+  consumerFirstName: string
+): Promise<BeerPost[]> {
+  //check if user is authenticated
+  const session = await auth();
+  const userId = session?.user._id;
+
+  if (!userId) {
+    throw new Error("User is not authenticated");
+  }
+  //convert friend id string to mongoose object ID
+  const friendObjectId = new mongoose.Types.ObjectId(id);
+
+  try {
+    await connectToDB();
+    //Check if user is fetching user's posts
+    let isUser = userId === id;
+    //Check if friend is on users friends list
+    const friendChecked: UserDocument | null = await User.findOne({
+      _id: userId,
+      friends: { $in: [friendObjectId] },
+    });
+    if (friendChecked || isUser) {
+      const friendsPosts = await Beer.find({
+        consumer: friendObjectId,
+      }).populate("withfriends");
+      //Convert Mongoose object ids to strings and extract friends first and last names to use on the frontend
+      const convertedPosts = friendsPosts.map((post) => {
+        const friendsNames = post.withfriends.map((friend: any) => ({
+          firstname: friend.firstname,
+          lastname: friend.lastname,
+        }));
+        return {
+          location: post.location,
+          consumer: consumerFirstName,
+          withfriends: friendsNames,
+          date: post.createdAt.toISOString(),
+        };
+      });
+      return convertedPosts;
+    } else {
+      return [];
+    }
+  } catch (error) {
+    console.error("Error fetching posts:", error);
+    throw new Error("Failed to fetch posts");
   }
 }

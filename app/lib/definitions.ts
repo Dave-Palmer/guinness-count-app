@@ -26,8 +26,21 @@ export interface BeerNumbers {
 }
 
 export interface LeaderBoardUser {
+  _id: string;
   firstname: string;
   lastname: string;
   totalBeers: number;
   currentUser: boolean;
 }
+
+type withfriends = {
+  firstname: string;
+  lastname: string;
+};
+
+export type BeerPost = {
+  location: string;
+  consumer: string;
+  withfriends: withfriends[];
+  date: string;
+};

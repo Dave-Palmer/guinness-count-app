@@ -2,7 +2,8 @@
 import { useState, useEffect } from "react";
 import { fetchFriendsTotalBeers } from "@/app/lib/data";
 import { LeaderBoardUser } from "@/app/lib/definitions";
-import { Spinner, Card, CardBody, Divider } from "@nextui-org/react";
+import { Spinner, Card, CardBody, Divider, Button } from "@nextui-org/react";
+import Link from "next/link";
 
 const page = () => {
   const [leaderboardUser, setLeaderboardUser] = useState<LeaderBoardUser[]>([]);
@@ -20,12 +21,11 @@ const page = () => {
         setIsLoading(false);
       }
     };
-
     fetchLeaderboard();
   }, []);
 
   return (
-    <div className="flex justify-center items-center flex-col">
+    <div className="flex justify-center items-center flex-col mb-5">
       <h1 className="text-2xl text-guinness-gold underline underline-offset-8 mb-3">
         Leaderboard
       </h1>
@@ -34,7 +34,7 @@ const page = () => {
       ) : (
         <div className="w-96">
           {leaderboardUser.map((user) => (
-            <Card radius="sm" className="mt-3">
+            <Card key={user._id} radius="sm" className="mt-3">
               <CardBody>
                 <p className="text-guinness-gold text-lg text-center">
                   {user.currentUser ? "You" : user.firstname}{" "}
@@ -44,6 +44,14 @@ const page = () => {
                 <p className="text-guinness-gold text-lg text-center">
                   🍺 Total beers - {user.totalBeers} 🍺
                 </p>
+                <Button
+                  as={Link}
+                  href={`/dashboard/leaderboard/${user._id}?firstname=${user.firstname}`}
+                  size="md"
+                  radius="sm"
+                  className="text-center bg-guinness-gold text-white mt-5">
+                  View Posts
+                </Button>
               </CardBody>
             </Card>
           ))}

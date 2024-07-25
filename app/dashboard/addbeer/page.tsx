@@ -1,10 +1,10 @@
 "use client";
-import { useEffect, useState } from "react";
-import { useRouter, redirect } from "next/navigation";
-import { Button, Link, Input, Tooltip } from "@nextui-org/react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button, Input, Tooltip } from "@nextui-org/react";
 import FriendsListModal from "@/app/components/FriendsListModal";
 import { Friend } from "@/models/user";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 import { addBeer } from "@/app/lib/actions";
 
 const page = () => {
