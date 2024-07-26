@@ -6,8 +6,6 @@ import {
   CardFooter,
   Divider,
   Button,
-  Accordion,
-  AccordionItem,
   Modal,
   ModalContent,
   ModalBody,

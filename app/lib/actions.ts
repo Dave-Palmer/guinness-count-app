@@ -65,7 +65,7 @@ export async function registerAccount(
     });
     return { success: true, message: user.username };
   } catch (error: any) {
-    console.log(error);
+    // console.log(error);
     if (error.code === 11000) {
       if (error.keyValue.email) {
         return { success: false, message: "Email is already in use" };
@@ -234,7 +234,7 @@ export async function deleteFriend(
   }
 }
 
-//Add beer
+//Add beer post
 
 export async function addBeer(location: string, friendsList?: Friend["_id"][]) {
   if (!location) {
@@ -263,5 +263,62 @@ export async function addBeer(location: string, friendsList?: Friend["_id"][]) {
   } catch (error) {
     console.log(error);
     return { status: 500, message: "Something went wrong, beer not added!" };
+  }
+}
+
+// Delete beer user's beer post
+type DeleteBeerPostRes = {
+  success: boolean;
+  message: string;
+};
+
+export async function deleteBeerPost(
+  beerPostId: string
+): Promise<DeleteBeerPostRes> {
+  try {
+    await connectToDB();
+    const deletedPost = await Beer.deleteOne({
+      _id: beerPostId,
+    });
+    if (deletedPost.deletedCount > 0) {
+      return { success: true, message: "Post deleted" };
+    } else {
+      return {
+        success: false,
+        message: "Something went wrong, post not deleted",
+      };
+    }
+  } catch (error) {
+    console.error(error);
+    throw new Error("Database error");
+  }
+}
+
+//Remove user account
+
+export async function removeUserAccount(userId: string) {
+  if (!userId) {
+    return { success: false, message: "User ID is required" };
+  }
+
+  try {
+    await connectToDB();
+    const convertedId = new mongoose.Types.ObjectId(userId);
+    // Delete the user's posts
+    await Beer.deleteMany({ consumer: convertedId });
+    // Remove the user's ID from other users' friends lists
+    await User.updateMany(
+      { friends: convertedId },
+      { $pull: { friends: convertedId } }
+    );
+    // Delete the user
+    await User.findByIdAndDelete(convertedId);
+    return {
+      success: true,
+      message: "User and associated data deleted successfully",
+    };
+  } catch (error) {
+    console.error(error);
+    return { success: false, message: "Internal Server Error" };
   }
 }

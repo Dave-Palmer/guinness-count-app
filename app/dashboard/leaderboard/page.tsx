@@ -4,6 +4,7 @@ import { fetchFriendsTotalBeers } from "@/app/lib/data";
 import { LeaderBoardUser } from "@/app/lib/definitions";
 import { Spinner, Card, CardBody, Divider, Button } from "@nextui-org/react";
 import Link from "next/link";
+import { FaBeer } from "react-icons/fa";
 
 const page = () => {
   const [leaderboardUser, setLeaderboardUser] = useState<LeaderBoardUser[]>([]);
@@ -42,7 +43,8 @@ const page = () => {
                 </p>
                 <Divider />
                 <p className="text-guinness-gold text-lg text-center">
-                  🍺 Total beers - {user.totalBeers} 🍺
+                  <FaBeer style={{ margin: "5px" }} /> Total beers -{" "}
+                  {user.totalBeers} <FaBeer style={{ margin: "5px" }} />
                 </p>
                 <Button
                   as={Link}

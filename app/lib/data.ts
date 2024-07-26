@@ -215,6 +215,7 @@ export async function fetchFriendsPosts(
           lastname: friend.lastname,
         }));
         return {
+          _id: post._id.toString(),
           location: post.location,
           consumer: consumerFirstName,
           withfriends: friendsNames,

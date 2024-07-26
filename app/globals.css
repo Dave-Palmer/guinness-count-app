@@ -22,6 +22,10 @@ main {
 
 }
 
+svg {
+  display: inline;
+}
+
 
 @layer utilities {
   .text-balance {
