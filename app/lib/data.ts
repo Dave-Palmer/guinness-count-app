@@ -220,6 +220,7 @@ export async function fetchFriendsPosts(
           consumer: consumerFirstName,
           withfriends: friendsNames,
           date: post.createdAt.toISOString(),
+          isUser: isUser,
         };
       });
       return convertedPosts;

@@ -48,7 +48,9 @@ const page = () => {
                 </p>
                 <Button
                   as={Link}
-                  href={`/dashboard/leaderboard/${user._id}?firstname=${user.firstname}`}
+                  href={`/dashboard/leaderboard/${user._id}?firstname=${
+                    user.currentUser ? "Your" : user.firstname
+                  }`}
                   size="md"
                   radius="sm"
                   className="text-center bg-guinness-gold text-white mt-5">

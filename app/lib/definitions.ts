@@ -44,4 +44,5 @@ export type BeerPost = {
   consumer: string;
   withfriends: withfriends[];
   date: string;
+  isUser?: boolean;
 };

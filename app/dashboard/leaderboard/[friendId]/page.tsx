@@ -56,7 +56,7 @@ const page = () => {
   return (
     <div className="flex justify-center items-center flex-col mb-2">
       <h1 className="text-2xl text-guinness-gold underline underline-offset-8 mb-3">
-        {firstName ? `${firstName}'s Posts` : "Posts"}
+        {firstName !== "Your" ? `${firstName}'s Posts` : "Your Posts"}
       </h1>
       {isLoading ? (
         <Spinner label="Loading..." color="warning" />
@@ -66,10 +66,12 @@ const page = () => {
           {friendsBeerPosts.map((post) => (
             <Card key={post._id.toString()} radius="sm" className=" min-w-80">
               <CardBody>
-                <RemovePostModal
-                  deleteBeerPost={removeBeerPost}
-                  id={post._id.toString()}
-                />
+                {post.isUser && (
+                  <RemovePostModal
+                    deleteBeerPost={removeBeerPost}
+                    id={post._id.toString()}
+                  />
+                )}
                 <p className="text-guinness-gold text-lg text-center underline underline-offset-4">
                   <IoLocation />
                 </p>
@@ -105,6 +107,9 @@ const page = () => {
                     <Divider style={{ marginTop: "auto" }} />
                   </>
                 )}
+                <p className=" text-guinness-gold text-sm text-center mt-auto">
+                  {post.date.split("T")[0]}
+                </p>
               </CardBody>
             </Card>
           ))}{" "}
