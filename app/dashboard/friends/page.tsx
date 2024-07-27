@@ -18,7 +18,6 @@ const page = () => {
   const [friends, setFriends] = useState<Friend[] | null>(null);
   const [triggerUseEffect, setTriggerUseEffect] = useState(false);
   const [isLoading, setIsloading] = useState(false);
-  const [noFriends, setNoFriends] = useState(false);
 
   const fetchFriendRequests = async () => {
     let requests: FriendRequest[] | null = await checkFriendRequests();

@@ -90,10 +90,10 @@ const RegisterForm = () => {
               </Button>
               <Button
                 as={Link}
-                size="sm"
+                size="md"
                 radius="sm"
                 href="/signin"
-                className="mb-2 bg-guinness-gold text-white">
+                className="mb-5 bg-guinness-gold text-white">
                 Back to sign in
               </Button>
             </form>
@@ -111,7 +111,7 @@ const RegisterForm = () => {
             size="lg"
             radius="sm"
             href="/signin"
-            className="m-2 bg-guinness-gold text-white mb-5">
+            className=" bg-guinness-gold text-white mb-2">
             Back to sign in
           </Button>
         </div>

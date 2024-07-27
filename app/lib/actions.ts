@@ -10,6 +10,10 @@ import bcrypt from "bcrypt";
 import mongoose from "mongoose";
 import { revalidatePath } from "next/cache";
 
+export async function demoSignInCreds() {
+  return { username: process.env.USERNAME, password: process.env.PASSWORD };
+}
+
 export async function authenticate(
   prevState: string | undefined,
   formData: FormData
