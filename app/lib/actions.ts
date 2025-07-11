@@ -27,7 +27,7 @@ export async function authenticate(
         case "CredentialsSignin":
           return "Invalid credentials";
         default:
-          return "Username or password incorrect";
+          return "Error signing in";
       }
     }
     throw error;
@@ -78,6 +78,8 @@ export async function registerAccount(
       } else {
         return { success: false, message: "Something went wrong" };
       }
+    } else {
+      return { success: false, message: "Something went wrong" };
     }
   }
 }

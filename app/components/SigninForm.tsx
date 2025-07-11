@@ -45,7 +45,7 @@ const SigninForm = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <SignInButton />{" "}
+        <SignInButton />
         {errorMessage && (
           <>
             <p className="text-sm text-red-500">{errorMessage}</p>

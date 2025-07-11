@@ -40,7 +40,7 @@ const UserSchema = new Schema<UserDocument>({
   firstname: { type: String, required: true },
   lastname: { type: String, required: true },
   email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
+  password: { type: String, required: true, minlength: 6 },
   friendRequests: [{ type: Schema.Types.ObjectId, ref: "User" }],
   friends: [{ type: Schema.Types.ObjectId, ref: "User" }],
 });

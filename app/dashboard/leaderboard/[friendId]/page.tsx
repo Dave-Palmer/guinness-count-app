@@ -12,6 +12,15 @@ import { deleteBeerPost } from "@/app/lib/actions";
 import RemovePostModal from "@/app/components/RemovePostModal";
 import { toast } from "sonner";
 
+const formatDateForBeerPosts = (postDate: string) => {
+  const date = new Date(postDate);
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+  const formattedDate = `${day}/${month}/${year}`;
+  return formattedDate;
+};
+
 const page = () => {
   const { friendId } = useParams();
   const searchParams = useSearchParams();
@@ -107,8 +116,11 @@ const page = () => {
                     <Divider style={{ marginTop: "auto" }} />
                   </>
                 )}
-                <p className=" text-guinness-gold text-sm text-center mt-auto">
+                {/* <p className=" text-guinness-gold text-sm text-center mt-auto">
                   {post.date.split("T")[0]}
+                </p> */}
+                <p className=" text-guinness-gold text-sm text-center mt-auto">
+                  {formatDateForBeerPosts(post.date)}
                 </p>
               </CardBody>
             </Card>

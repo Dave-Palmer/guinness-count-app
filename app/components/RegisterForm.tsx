@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { Input, Button, Link } from "@nextui-org/react";
+import { Input, Button, Link, Spinner } from "@nextui-org/react";
 import { useFormState, useFormStatus } from "react-dom";
 import { registerAccount } from "../lib/actions";
 
@@ -11,7 +11,6 @@ const initialState = {
 
 const RegisterForm = () => {
   const [formState, dispatch] = useFormState(registerAccount, initialState);
-  const { pending } = useFormStatus();
   return (
     <div>
       {" "}
@@ -20,9 +19,6 @@ const RegisterForm = () => {
           <h2 className="text-2xl guinness-gold mt-8">Create Account</h2>
           <div className="w-96">
             <form className="flex flex-col items-center" action={dispatch}>
-              {!formState?.success && formState?.message && (
-                <p className="text-lg text-red-500">{formState?.message}</p>
-              )}
               <Input
                 isRequired
                 id="email"
@@ -66,6 +62,7 @@ const RegisterForm = () => {
                 name="password"
                 size="lg"
                 radius="sm"
+                minLength={6}
                 type="password"
                 label="Password"
                 className="m-2"
@@ -80,14 +77,10 @@ const RegisterForm = () => {
                 label="Confirm password"
                 className="m-2"
               />
-              <Button
-                isDisabled={pending}
-                size="lg"
-                radius="sm"
-                type="submit"
-                className="m-4 text-center bg-guinness-gold text-white">
-                Create
-              </Button>
+              {!formState?.success && formState?.message && (
+                <p className="text-lg text-red-500">{formState?.message}</p>
+              )}
+              <CreateButton />
               <Button
                 as={Link}
                 size="md"
@@ -119,5 +112,19 @@ const RegisterForm = () => {
     </div>
   );
 };
+
+function CreateButton() {
+  const { pending } = useFormStatus();
+  return (
+    <Button
+      isDisabled={pending}
+      size="lg"
+      radius="sm"
+      type="submit"
+      className="m-4 text-center bg-guinness-gold text-white">
+      {pending ? <Spinner size="sm" color="default" /> : "Create"}
+    </Button>
+  );
+}
 
 export default RegisterForm;
