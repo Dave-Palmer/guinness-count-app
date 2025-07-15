@@ -28,7 +28,6 @@ const ProfileIcon = ({ signout }: { signout: () => void }) => {
       </DropdownTrigger>
       <DropdownMenu aria-label="Profile Actions">
         <DropdownItem
-          variant="none"
           className="duration-300 ease-in-out hover:bg-[rgba(255,255,255,0.3)]"
           as={Link}
           href="/dashboard/profile">
@@ -36,7 +35,6 @@ const ProfileIcon = ({ signout }: { signout: () => void }) => {
         </DropdownItem>
         <DropdownItem
           onClick={() => signout()}
-          variant="none"
           className=" transition-background ease-in-out duration-[1s] hover:bg-[rgba(255,255,255,0.3)]"
           key="logout">
           Sign Out

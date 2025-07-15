@@ -27,16 +27,20 @@ const SigninForm = () => {
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [loadingCredentials, setLoadingCredentials] = useState(false);
 
   const searchParams = useSearchParams();
   const usernameFromQuery = searchParams.get("username");
 
   async function fetchDemoCredentials() {
+    setLoadingCredentials(true);
     const credentials = await demoSignInCreds();
     if (credentials.username && credentials.password) {
       setUsername(credentials.username);
       setPassword(credentials.password);
+      setLoadingCredentials(false);
     }
+    setLoadingCredentials(false);
   }
 
   useEffect(() => {
@@ -87,6 +91,7 @@ const SigninForm = () => {
           <Button
             size="lg"
             radius="sm"
+            isLoading={loadingCredentials}
             className="text-center bg-guinness-gold text-white"
             onClick={fetchDemoCredentials}>
             Demo Credentials
