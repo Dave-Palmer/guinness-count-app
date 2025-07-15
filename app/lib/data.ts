@@ -8,14 +8,58 @@ import User, {
 } from "@/models/user";
 import Beer from "@/models/beer";
 import { auth } from "@/auth";
-import { BeerNumbers, LeaderBoardUser, BeerPost } from "./definitions";
+import {
+  BeerNumbers,
+  LeaderBoardUser,
+  BeerPost,
+  UserProfile,
+} from "./definitions";
 import mongoose from "mongoose";
 
+export async function getUser(username: string) {
+  try {
+    await connectToDB();
+    const user = await User.findOne({ username: username });
+    if (user.username) {
+      return user;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error("Failed to fetch user.");
+    throw new Error("Failed to fetch user.");
+  }
+}
+
+export async function getUserProfileInfo(): Promise<UserProfile | null> {
+  try {
+    const session = await auth();
+    const username = session?.user.username;
+    if (!username) {
+      throw new Error("User is not authenticated");
+    }
+    const user = await getUser(username);
+    if (!user) {
+      return null;
+    }
+    return {
+      id: user._id.toString(),
+      username: user.username,
+      firstname: user.firstname,
+      lastname: user.lastname,
+      email: user.email,
+      emailVerified: user.emailVerified ? user.emailVerified : null,
+    };
+  } catch (error) {
+    console.error("Error fetching user profile:", error);
+    return null;
+  }
+}
 export async function checkFriendRequests(): Promise<FriendRequest[] | null> {
   try {
     // Authenticate the user
     const session = await auth();
-    const userId = session?.user._id;
+    const userId = session?.user.id;
 
     if (!userId) {
       throw new Error("User is not authenticated");
@@ -51,7 +95,7 @@ export async function checkFriendRequests(): Promise<FriendRequest[] | null> {
 export async function fetchListOfFriends() {
   //Check if user is authenticated
   const session = await auth();
-  const userId = session?.user._id;
+  const userId = session?.user.id;
   if (!userId) {
     throw new Error("User is not authenticated");
   }
@@ -104,7 +148,7 @@ function compareEntrieDates(userId: string) {
 //Fetch total beers & Total beers this week
 export async function fetchTotalBeers(): Promise<BeerNumbers | undefined> {
   const session = await auth();
-  const userId = session?.user._id;
+  const userId = session?.user.id;
   if (!userId) {
     throw new Error("User is not authenticated");
   }
@@ -127,7 +171,7 @@ export async function fetchTotalBeers(): Promise<BeerNumbers | undefined> {
 
 export async function fetchFriendsTotalBeers(): Promise<LeaderBoardUser[]> {
   const session = await auth();
-  const userId = session?.user._id;
+  const userId = session?.user.id;
 
   if (!userId) {
     throw new Error("User is not authenticated");
@@ -187,7 +231,7 @@ export async function fetchFriendsPosts(
 ): Promise<BeerPost[]> {
   //check if user is authenticated
   const session = await auth();
-  const userId = session?.user._id;
+  const userId = session?.user.id;
 
   if (!userId) {
     throw new Error("User is not authenticated");

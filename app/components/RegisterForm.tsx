@@ -9,6 +9,20 @@ const initialState = {
   message: "",
 };
 
+function CreateAccountButton() {
+  const { pending } = useFormStatus();
+  return (
+    <Button
+      isDisabled={pending}
+      size="lg"
+      radius="sm"
+      type="submit"
+      className="m-4 text-center bg-guinness-gold text-white">
+      {pending ? <Spinner size="sm" color="default" /> : "Create"}
+    </Button>
+  );
+}
+
 const RegisterForm = () => {
   const [formState, dispatch] = useFormState(registerAccount, initialState);
   return (
@@ -80,7 +94,7 @@ const RegisterForm = () => {
               {!formState?.success && formState?.message && (
                 <p className="text-lg text-red-500">{formState?.message}</p>
               )}
-              <CreateButton />
+              <CreateAccountButton />
               <Button
                 as={Link}
                 size="md"
@@ -96,14 +110,15 @@ const RegisterForm = () => {
       {formState?.success && (
         <div className="w-96 flex flex-col items-center">
           <h2 className="text-2xl guinness-gold mt-8">
-            Successfully created account
+            Successfully created account!
           </h2>
-          <p className="text-2xl guinness-gold mt-8">{formState.message}</p>
+          <p className="text-2xl guinness-gold mt-8 underline">Username:</p>
+          <p className="text-4xl guinness-gold m-2">{formState.message}</p>
           <Button
             as={Link}
             size="lg"
             radius="sm"
-            href="/signin"
+            href={`/signin?username=${formState.message}`}
             className=" bg-guinness-gold text-white mb-2">
             Back to sign in
           </Button>
@@ -112,19 +127,5 @@ const RegisterForm = () => {
     </div>
   );
 };
-
-function CreateButton() {
-  const { pending } = useFormStatus();
-  return (
-    <Button
-      isDisabled={pending}
-      size="lg"
-      radius="sm"
-      type="submit"
-      className="m-4 text-center bg-guinness-gold text-white">
-      {pending ? <Spinner size="sm" color="default" /> : "Create"}
-    </Button>
-  );
-}
 
 export default RegisterForm;

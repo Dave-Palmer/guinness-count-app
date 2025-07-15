@@ -9,6 +9,8 @@ import { RegisterFormSchema } from "./zod";
 import bcrypt from "bcrypt";
 import mongoose from "mongoose";
 import { revalidatePath } from "next/cache";
+import { UserProfile } from "./definitions";
+import { UpdateProfileSchema } from "./zod";
 
 export async function demoSignInCreds() {
   return { username: process.env.USERNAME, password: process.env.PASSWORD };
@@ -84,21 +86,6 @@ export async function registerAccount(
   }
 }
 
-export async function getUser(username: string) {
-  try {
-    await connectToDB();
-    const user = await User.findOne({ username: username });
-    if (user.username) {
-      return user;
-    } else {
-      return null;
-    }
-  } catch (error) {
-    console.error("Failed to fetch user.");
-    throw new Error("Failed to fetch user.");
-  }
-}
-
 export async function signout() {
   await signOut();
 }
@@ -111,7 +98,7 @@ export async function addNewFriendRequest(username: string) {
     //check if user exists, in not return an appropiate message
     const newFriend = await User.findOne({ username: username });
     // const currentUser = session?.user;
-    const currentUser = await User.findById(session?.user._id);
+    const currentUser = await User.findById(session?.user.id);
     //Check if user is trying to add themselves as a friend
     if (currentUser?.username === username) {
       return { status: 400, message: "You cannot add yourself as a friend!" };
@@ -141,7 +128,7 @@ export async function acceptFriendRequest(senderId: string) {
   try {
     await connectToDB();
     const session = await auth();
-    const currentUser = await User.findById(session?.user?._id);
+    const currentUser = await User.findById(session?.user?.id);
     const currentUserId = currentUser?._id;
     //Check if friend request user still exists
     const newFriend = await User.findById(senderId);
@@ -183,7 +170,7 @@ export async function rejectFriendRequest(senderId: string) {
   try {
     await connectToDB();
     const session = await auth();
-    const currentUser = await User.findById(session?.user?._id);
+    const currentUser = await User.findById(session?.user?.id);
     const convertedSenderId = new mongoose.Types.ObjectId(senderId);
     if (currentUser) {
       await User.updateOne(
@@ -205,7 +192,7 @@ export async function deleteFriend(
   try {
     // Authenticate the user
     const session = await auth();
-    const userId = session?.user._id;
+    const userId = session?.user.id;
 
     if (!userId) {
       throw new Error("User is not authenticated");
@@ -249,7 +236,7 @@ export async function addBeer(location: string, friendsList?: Friend["_id"][]) {
   try {
     connectToDB();
     const session = await auth();
-    const currentUser = await User.findById(session?.user?._id);
+    const currentUser = await User.findById(session?.user?.id);
     if (currentUser) {
       let withFriends = undefined;
       if (friendsList) {
@@ -300,16 +287,126 @@ export async function deleteBeerPost(
   }
 }
 
+//Update user account
+// export async function updateUserAccount(
+//   updatedProfile: UserProfile
+// ): Promise<{ success: boolean; message: string }> {
+//   try {
+//     const session = await auth();
+
+//     if (!session || !session.user || !session.user.id) {
+//       return { success: false, message: "Unauthorized: No session found." };
+//     }
+
+//     const userIdFromSession = session.user.id;
+//     const userIdFromPayload = updatedProfile.id;
+
+//     // Security check: ensure users can only update their own profile
+//     if (userIdFromSession !== userIdFromPayload) {
+//       return {
+//         success: false,
+//         message: "Permission denied: Cannot update another user.",
+//       };
+//     }
+
+//     // Perform the update in the DB
+//     const updateResult = await User.findByIdAndUpdate(userIdFromSession, {
+//       username: updatedProfile.username,
+//       firstname: updatedProfile.firstname,
+//       lastname: updatedProfile.lastname,
+//       email: updatedProfile.email,
+//     });
+
+//     if (!updateResult) {
+//       return {
+//         success: false,
+//         message: "Failed to update user in database.",
+//       };
+//     }
+
+//     return { success: true, message: "Profile updated successfully." };
+//   } catch (error) {
+//     console.error("Error updating user:", error);
+//     return {
+//       success: false,
+//       message: "An unexpected error occurred.",
+//     };
+//   }
+// }
+
+export async function updateUserAccount(
+  payload: unknown
+): Promise<{ success: boolean; message: string }> {
+  try {
+    const session = await auth();
+
+    if (!session || !session.user || !session.user.id) {
+      return { success: false, message: "Unauthorized: No session found." };
+    }
+    const parseResult = UpdateProfileSchema.safeParse(payload);
+
+    if (!parseResult.success) {
+      const message =
+        parseResult.error.errors.map((err) => err.message).join(", ") ||
+        "Validation error";
+      return { success: false, message };
+    }
+
+    const updatedProfile = parseResult.data;
+
+    const userIdFromSession = session.user.id;
+    const userIdFromPayload = updatedProfile.id;
+
+    if (userIdFromSession !== userIdFromPayload) {
+      return {
+        success: false,
+        message: "Permission denied: Cannot update another user.",
+      };
+    }
+
+    const updateResult = await User.findByIdAndUpdate(userIdFromSession, {
+      username: updatedProfile.username,
+      firstname: updatedProfile.firstname,
+      lastname: updatedProfile.lastname,
+      email: updatedProfile.email,
+    });
+
+    if (!updateResult) {
+      return {
+        success: false,
+        message: "Failed to update user in database.",
+      };
+    }
+
+    return { success: true, message: "Profile updated successfully." };
+  } catch (error) {
+    console.error("Error updating user:", error);
+    return {
+      success: false,
+      message: "An unexpected error occurred.",
+    };
+  }
+}
+
 //Remove user account
 
-export async function removeUserAccount(userId: string) {
-  if (!userId) {
-    return { success: false, message: "User ID is required" };
+export async function removeUserAccount(userId: string, password: string) {
+  if (!userId || !password) {
+    return { success: false, message: "Failed to remove user account" };
   }
 
   try {
     await connectToDB();
     const convertedId = new mongoose.Types.ObjectId(userId);
+    const user = await User.findById(convertedId);
+    if (!user) {
+      return { success: false, message: "User not found!" };
+    }
+    //Check password matches
+    const passwordsMatch = await bcrypt.compare(password, user.password);
+    if (!passwordsMatch) {
+      return { success: false, message: "Password incorrect!" };
+    }
     // Delete the user's posts
     await Beer.deleteMany({ consumer: convertedId });
     // Remove the user's ID from other users' friends lists

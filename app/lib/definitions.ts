@@ -13,6 +13,15 @@ export type User = {
   friends: [mongoose.Types.ObjectId];
 };
 
+export type UserProfile = {
+  id: string; // instead of _id
+  username: string;
+  firstname: string;
+  lastname: string;
+  email: string;
+  emailVerified: Date | null;
+};
+
 export type FriendRequest = {
   _id: string;
   username: string;

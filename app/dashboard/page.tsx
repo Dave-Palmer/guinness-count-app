@@ -11,12 +11,14 @@ async function getBeerNumbers(): Promise<BeerNumbers | undefined> {
 
 const page = async () => {
   const session = await auth();
-  const user = session?.user;
+  const userFirstname = session?.user?.firstname;
   const beers = await getBeerNumbers();
 
   return (
     <>
-      <h1 className="p-2 text-2xl guinness-gold">Hello {user?.firstname}</h1>
+      <h1 className="p-2 text-2xl guinness-gold">
+        Hello {userFirstname || "you"}
+      </h1>
       <div className="flex items-center justify-items-center flex-row">
         <BeerCountCard
           text="Total Guinness"

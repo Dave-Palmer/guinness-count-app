@@ -14,7 +14,10 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      colors: { "guinness-gold": "rgb(190, 150, 91)" },
+      colors: {
+        "guinness-gold": "rgb(190, 150, 91)",
+        "guinness-gold-faded": "rgba(190, 150, 91, 0.5)",
+      },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":

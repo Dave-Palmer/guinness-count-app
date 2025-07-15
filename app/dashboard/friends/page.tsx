@@ -72,7 +72,7 @@ const page = () => {
   }, [triggerUseEffect]);
 
   return (
-    <div className="flex flex-col justify-center items-center w-4/5 sm:w-80">
+    <div className="flex flex-col mb-5 justify-center items-center w-4/5 sm:w-80">
       {!!friendRequests && (
         <>
           <Badge content="1" color="danger" shape="circle" placement="top-left">
@@ -80,6 +80,7 @@ const page = () => {
               onPress={() => {
                 setShowRequests(!showRequests);
               }}
+              fullWidth
               size="lg"
               radius="sm"
               className="text-center bg-guinness-gold text-white m-2">

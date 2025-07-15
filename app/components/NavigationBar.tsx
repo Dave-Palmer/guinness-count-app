@@ -11,6 +11,7 @@ import {
   Link,
   Button,
 } from "@nextui-org/react";
+import ProfileIcon from "./ProfileIcon";
 import { signout } from "../lib/actions";
 
 export default function NavigationBar() {
@@ -42,6 +43,13 @@ export default function NavigationBar() {
       },
     },
     {
+      name: "Profile",
+      href: "./dashboard/profile",
+      onClickMethod: () => {
+        setIsMenuOpen();
+      },
+    },
+    {
       name: "Signout",
       href: undefined,
       onClickMethod: () => {
@@ -51,7 +59,10 @@ export default function NavigationBar() {
   ];
 
   return (
-    <Navbar onMenuOpenChange={setIsMenuOpen} isMenuOpen={isMenuOpen}>
+    <Navbar
+      maxWidth="full"
+      onMenuOpenChange={setIsMenuOpen}
+      isMenuOpen={isMenuOpen}>
       <NavbarContent>
         <NavbarMenuToggle
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
@@ -64,7 +75,7 @@ export default function NavigationBar() {
 
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
         {menuItems.map((item, index) =>
-          item.name !== "Signout" ? (
+          item.name !== "Signout" && item.name !== "Profile" ? (
             <NavbarItem key={`${item}-${index}`}>
               <Button
                 radius="sm"
@@ -78,14 +89,8 @@ export default function NavigationBar() {
         )}
       </NavbarContent>
       <NavbarContent justify="end">
-        <NavbarItem>
-          <Button
-            onPress={() => signout()}
-            variant="flat"
-            radius="full"
-            className="hidden sm:flex">
-            Sign out
-          </Button>
+        <NavbarItem className="hidden sm:flex">
+          <ProfileIcon signout={signout} />
         </NavbarItem>
       </NavbarContent>
       {/* Menu items for collapsed navbar */}

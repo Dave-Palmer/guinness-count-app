@@ -2,7 +2,7 @@ import React from "react";
 
 const BeerCountCard = ({ text, number }: { text: string; number: number }) => {
   return (
-    <div className="flex flex-col items-center block m-2 p-2 w-[200px]">
+    <div className="flex flex-col items-center m-2 p-2 w-[200px]">
       <h5
         className={` text-center mb-2 text-xl font-bold tracking-tight guinness-gold`}>
         {text}
