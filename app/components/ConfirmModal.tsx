@@ -48,7 +48,7 @@ const ConfirmModal = ({ text, buttonAction, userId }: ConfirmModalProps) => {
                 <p className="text-lg">
                   Are you sure you want to remove your account?
                 </p>
-                <p className="text-lg">If so, please enter your password</p>
+                <p className="text-lg">If so, please enter your password:</p>
                 <Input
                   label="Password"
                   type="password"

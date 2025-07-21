@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import {
   Card,
   CardHeader,
@@ -36,7 +37,7 @@ export default function Profile({
 }: ProfileProps) {
   const [editMode, setEditMode] = useState(false);
   const [profile, setProfile] = useState<UserProfileInput | null>(userProfile);
-
+  const router = useRouter();
   // Keep a reference to the original profile for change detection
   const originalProfile = userProfile;
 
@@ -68,6 +69,7 @@ export default function Profile({
         duration: 3000,
       });
       setEditMode(false);
+      router.refresh();
     } else {
       toast.warning(`Update failed: ${res.message}`, { duration: 3000 });
     }

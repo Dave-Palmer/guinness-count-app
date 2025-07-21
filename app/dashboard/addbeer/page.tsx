@@ -75,7 +75,7 @@ const page = () => {
         onPress={handleAddBeer}
         size="lg"
         radius="sm"
-        className="text-center bg-guinness-gold text-white mt-5">
+        className="text-center bg-guinness-gold text-white mt-5 w-40">
         Add Beer
       </Button>
     </div>

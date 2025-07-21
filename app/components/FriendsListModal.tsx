@@ -8,8 +8,7 @@ import {
   ModalFooter,
   Button,
   useDisclosure,
-  RadioGroup,
-  Radio,
+  Badge,
 } from "@nextui-org/react";
 import { FriendCard } from "./FriendCard";
 import { fetchListOfFriends } from "../lib/data";
@@ -51,13 +50,20 @@ const FriendsListModal: React.FC<ChildComponentProps> = ({
   }, []);
   return (
     <div className="flex flex-col gap-2">
-      <Button
-        size="lg"
-        radius="sm"
-        onPress={onOpen}
-        className=" text-center bg-guinness-gold text-white mt-5">
-        Add Friends?
-      </Button>
+      <Badge
+        isInvisible={data.length === 0}
+        color="default"
+        content={data.length}
+        placement="bottom-right"
+        size="lg">
+        <Button
+          size="lg"
+          radius="sm"
+          onPress={onOpen}
+          className=" text-center bg-guinness-gold text-white mt-5 w-40">
+          Add Friends?
+        </Button>
+      </Badge>
       <Modal
         isOpen={isOpen}
         placement="top-center"
@@ -91,8 +97,6 @@ const FriendsListModal: React.FC<ChildComponentProps> = ({
                 </Button>
                 {/* When modal is closed, the friends list is added to the data array in parent component */}
                 <Button
-                  // color="primary"
-                  // variant="light"
                   className="text-center bg-guinness-gold text-white"
                   onPress={() => {
                     updateData(friendList);

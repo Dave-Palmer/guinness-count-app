@@ -66,7 +66,6 @@ const SigninForm = () => {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
-
           <Input
             required
             radius="sm"

@@ -1,26 +1,28 @@
-import { Button, Image } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
+import Image from "next/image";
 import Link from "next/link";
 export default function Home() {
   return (
-    <main className="flex flex-col items-center justify-start min-h-screen">
+    <main className="flex flex-col items-center justify-center min-h-screen">
       <Image
         className="mt-10"
-        src="/kisspng-guinness-gluten-free-beer-irish-stout-5aec5b0086e038.5345542415254392325525.png"
+        src="/guinness-glass.png"
         alt="guinness glass"
         width={230}
+        height={300}
       />
-      <div className="w-2/3 md:w-1/3 flex flex-col items-center min-h-[250px] justify-between">
-        <h1 className="text-2xl guinness-gold font-medium mt-2">Hello</h1>
+      <div className="w-2/3 md:w-1/3 flex flex-col items-center min-h-[250px]">
+        <h1 className="text-2xl guinness-gold font-medium mt-2">Welcome!</h1>
         <p className="text-2xl guinness-gold font-medium text-center">
-          Welcome to the Guinness counting app
+          Enjoying a creamy pint?
         </p>
-        <div className="flex items-center justify-center pt-4">
+        <div className="flex items-center justify-center mt-6 pt-4">
           <Button
             as={Link}
             size="lg"
             radius="sm"
             href="/signin"
-            className="m-2 bg-guinness-gold text-white">
+            className="m-2 bg-guinness-gold text-white w-32">
             Sign In
           </Button>
           <Button
@@ -28,7 +30,7 @@ export default function Home() {
             radius="sm"
             size="lg"
             href="/register"
-            className="m-2 bg-guinness-gold text-white">
+            className="m-2 bg-guinness-gold text-white w-32">
             Register
           </Button>
         </div>
