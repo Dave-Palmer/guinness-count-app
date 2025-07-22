@@ -44,7 +44,7 @@ export default function NavigationBar() {
     },
     {
       name: "Profile",
-      href: "./dashboard/profile",
+      href: "/dashboard/profile",
       onClickMethod: () => {
         setIsMenuOpen();
       },
