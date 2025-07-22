@@ -14,9 +14,7 @@ export default function DashboardLayout({
       <section className="flex flex-col items-center w-full">
         <div className="p-10">
           <Image
-            src={
-              "https://upload.wikimedia.org/wikipedia/en/thumb/f/f8/Guinness_logo_dark_text.svg/220px-Guinness_logo_dark_text.svg.png"
-            }
+            src={"/guinness-logo.png"}
             width={150}
             height={150}
             alt="Guinness Logo"

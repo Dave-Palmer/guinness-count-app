@@ -3,35 +3,36 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button, Input, Tooltip } from "@nextui-org/react";
 import FriendsListModal from "@/app/components/FriendsListModal";
-import { Friend } from "@/models/user";
 import { toast } from "sonner";
 import { addBeer } from "@/app/lib/actions";
+import SliderWithIcon from "@/app/components/SliderWithIcon";
+import type { BeerPostData } from "@/app/lib/definitions";
+
+const initialState = {
+  location: "",
+  ratingValue: 5,
+  friends: [],
+};
 
 const page = () => {
-  const [data, setData] = useState<Friend["_id"][]>([]);
-  const [location, setLocation] = useState("");
+  const [data, setData] = useState<BeerPostData>(initialState);
   const [openToolTip, setOpenToolTip] = useState(false);
-
-  const updateData = (updatedData: Friend["_id"][]) => {
-    setData(updatedData);
-  };
 
   const router = useRouter();
 
   const handleAddBeer = async () => {
-    if (!location) {
+    if (!data.location) {
       setOpenToolTip(true);
       return;
     }
     try {
-      const res = await addBeer(location, data);
+      const res = await addBeer(data);
       if (res?.status === 400 || res?.status === 500) {
         toast.error(res.message, { duration: 3000 });
         return;
       }
       if (res?.status === 200) {
         toast.success(res.message, { duration: 3000 });
-        setLocation("");
         router.push("/dashboard");
       }
     } catch (error) {
@@ -40,7 +41,7 @@ const page = () => {
   };
 
   return (
-    <div className="w-96 flex items-center justify-center flex-col">
+    <div className="w-80 md:w-96 flex items-center justify-center flex-col mb-5">
       <p className="m-2 text-zinc-500">Where did you have a Guinness?</p>
       <Tooltip
         showArrow
@@ -61,16 +62,34 @@ const page = () => {
           style={{ fontSize: "16px" }}
           fullWidth={true}
           radius="sm"
-          value={location}
+          value={data.location}
           type="text"
           label="location"
           onChange={(e) => {
-            setLocation(e.target.value);
+            setData((prev) => {
+              return { ...prev, location: e.target.value };
+            });
             setOpenToolTip(false);
           }}
         />
       </Tooltip>
-      <FriendsListModal data={data} updateData={updateData} />
+      <p className="m-5 text-zinc-500">How did you rate the Guinness?</p>
+      <SliderWithIcon
+        value={data.ratingValue}
+        setValue={(rating) =>
+          setData((prev) => {
+            return { ...prev, ratingValue: rating };
+          })
+        }
+      />
+      <FriendsListModal
+        friends={data.friends}
+        updateFriendsList={(listOfFriends) =>
+          setData((prev) => {
+            return { ...prev, friends: listOfFriends };
+          })
+        }
+      />
       <Button
         onPress={handleAddBeer}
         size="lg"

@@ -50,8 +50,15 @@ type withfriends = {
 export type BeerPost = {
   _id: string | mongoose.Types.ObjectId;
   location: string;
+  rating: number;
   consumer: string;
   withfriends: withfriends[];
   date: string;
   isUser?: boolean;
+};
+
+export type BeerPostData = {
+  location: string;
+  ratingValue: number;
+  friends?: Friend["_id"][];
 };

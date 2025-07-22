@@ -1,8 +1,7 @@
 "use client";
 import React, { Suspense } from "react";
-// import { Image } from "@nextui-org/react";
 import SigninForm from "../components/SigninForm";
-import { Image } from "@nextui-org/react";
+import Image from "next/image";
 
 const page = () => {
   return (
@@ -12,6 +11,8 @@ const page = () => {
         src="/guinness-glass.png"
         alt="guinness glass"
         width={230}
+        height={230}
+        priority
       />
       <Suspense>
         <SigninForm />

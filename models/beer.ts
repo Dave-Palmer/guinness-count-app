@@ -5,6 +5,11 @@ const beerSchema = new Schema({
     type: String,
     required: [true, "Location is required"],
   },
+  rating: {
+    type: Number,
+    required: [true, "Rating is require"],
+    default: 5,
+  },
   consumer: {
     type: Schema.Types.ObjectId,
     ref: "User",

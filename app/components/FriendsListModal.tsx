@@ -15,13 +15,13 @@ import { fetchListOfFriends } from "../lib/data";
 import { Friend } from "@/models/user";
 
 interface ChildComponentProps {
-  data: Friend["_id"][];
-  updateData: (updatedData: Friend["_id"][]) => void;
+  friends?: Friend["_id"][] | [];
+  updateFriendsList: (updatedData: Friend["_id"][]) => void;
 }
 
 const FriendsListModal: React.FC<ChildComponentProps> = ({
-  data,
-  updateData,
+  friends,
+  updateFriendsList,
 }) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [listOfFriends, setListOfFriends] = useState<Friend[]>([]);
@@ -51,9 +51,9 @@ const FriendsListModal: React.FC<ChildComponentProps> = ({
   return (
     <div className="flex flex-col gap-2">
       <Badge
-        isInvisible={data.length === 0}
+        isInvisible={friends?.length === 0}
         color="default"
-        content={data.length}
+        content={friends?.length}
         placement="bottom-right"
         size="lg">
         <Button
@@ -77,7 +77,6 @@ const FriendsListModal: React.FC<ChildComponentProps> = ({
               </ModalHeader>
               <ModalBody>
                 <div className="gap-2 grid grid-cols-2 sm:grid-cols-4">
-                  {/* <FriendCardList handleAddToFriendList={handleAddToFriendList} /> */}
                   {listOfFriends.map((friend: Friend) => (
                     <FriendCard
                       key={friend._id.toString()}
@@ -99,7 +98,7 @@ const FriendsListModal: React.FC<ChildComponentProps> = ({
                 <Button
                   className="text-center bg-guinness-gold text-white"
                   onPress={() => {
-                    updateData(friendList);
+                    updateFriendsList(friendList);
                     onClose();
                   }}>
                   Add friends

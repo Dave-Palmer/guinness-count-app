@@ -261,6 +261,7 @@ export async function fetchFriendsPosts(
         return {
           _id: post._id.toString(),
           location: post.location,
+          rating: post.rating,
           consumer: consumerFirstName,
           withfriends: friendsNames,
           date: post.createdAt.toISOString(),

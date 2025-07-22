@@ -88,6 +88,10 @@ const page = () => {
                   {post.location}
                 </p>
                 <Divider />
+                <p className="text-guinness-gold text-l text-center">
+                  Guinness rating: {post.rating}/10
+                </p>
+                <Divider />
                 {post.withfriends.length > 0 ? (
                   <>
                     <p className="text-guinness-gold text-lg text-center">
@@ -116,9 +120,6 @@ const page = () => {
                     <Divider style={{ marginTop: "auto" }} />
                   </>
                 )}
-                {/* <p className=" text-guinness-gold text-sm text-center mt-auto">
-                  {post.date.split("T")[0]}
-                </p> */}
                 <p className=" text-guinness-gold text-sm text-center mt-auto">
                   {formatDateForBeerPosts(post.date)}
                 </p>

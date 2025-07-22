@@ -2,14 +2,14 @@
 
 import { signIn, signOut, auth } from "@/auth";
 import { AuthError } from "next-auth";
-import User, { Friend } from "@/models/user";
+import User from "@/models/user";
 import Beer from "@/models/beer";
 import connectToDB from "@/utils/db";
 import { RegisterFormSchema } from "./zod";
 import bcrypt from "bcrypt";
 import mongoose from "mongoose";
 import { revalidatePath } from "next/cache";
-import { UserProfile } from "./definitions";
+import { BeerPostData, UserProfile } from "./definitions";
 import { UpdateProfileSchema } from "./zod";
 
 export async function demoSignInCreds() {
@@ -229,8 +229,8 @@ export async function deleteFriend(
 
 //Add beer post
 
-export async function addBeer(location: string, friendsList?: Friend["_id"][]) {
-  if (!location) {
+export async function addBeer(beerPostData: BeerPostData) {
+  if (!beerPostData.location) {
     return { status: 400, message: "Location is required" };
   }
   try {
@@ -239,14 +239,15 @@ export async function addBeer(location: string, friendsList?: Friend["_id"][]) {
     const currentUser = await User.findById(session?.user?.id);
     if (currentUser) {
       let withFriends = undefined;
-      if (friendsList) {
-        withFriends = friendsList.map(
+      if (beerPostData?.friends) {
+        withFriends = beerPostData.friends.map(
           (friend) => new mongoose.Types.ObjectId(friend)
         );
       }
       const beerData = {
-        location: location,
+        location: beerPostData.location,
         consumer: currentUser._id,
+        rating: beerPostData.ratingValue,
         withfriends: withFriends,
       };
       const beer = await new Beer(beerData).save();
